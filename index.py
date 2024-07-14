@@ -50,6 +50,3 @@ def close_connection() -> str:
 
 def wait() -> None:
     time.sleep(10)
-
-
-create_instance()
