@@ -18,6 +18,9 @@ class TestHelperFunctions(unittest.TestCase):
         patch('SerialHandler.SerialHandler.get_instance', return_value=self.__mock_serial).start()
         self.__mock_serial_handler.get_instance.return_value = TestHelperFunctions.__mock_serial
 
+    def tearDown(self) -> None:
+        patch.stopall()
+
     def test_merge_command_result_with_signed_true(self) -> None:
         self.assertEqual(
             Helper.merge_command_result([102, 1, 2, 191, 235, 254, 226, 0, 52, 52], True),
