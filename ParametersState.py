@@ -131,6 +131,14 @@ class ParametersState:
         self.__c_slope = value
 
     @property
+    def c_inter(self):
+        return self.__c_inter
+
+    @c_inter.setter
+    def c_inter(self, value):
+        self.__c_inter = value
+
+    @property
     def q_limits(self):
         return self.__q_limits
 

@@ -2,7 +2,6 @@ from io import TextIOWrapper
 from math import log2
 from HelperFunctions import Helper
 from ParameterStateSingleton import ParameterStateSingleton
-from ParametersState import ParametersState
 from SerialHandler import SerialHandler
 
 def voltage_and_current(file: TextIOWrapper) -> dict:
@@ -10,45 +9,46 @@ def voltage_and_current(file: TextIOWrapper) -> dict:
     voltage_and_current = Helper.send_command(file, 0x2C)
     voltage = Helper.merge(*voltage_and_current[3:5], signed=True)
 
-    vpga = Helper.send_command(file, 0x3C)[4]
-    p = ParametersState()
-    # vpga = p.v_pga
+    # vpga = Helper.send_command(file, 0x3C)[4]
+    p = ParameterStateSingleton().get_instance()
+    vpga = p.v_pga
     voltage_fractional_bits_index = int(3 + log2(vpga))
 
     adc_volts = Helper.calculate_adc_from_raw_value(voltage, vpga)
 
-    v_slope = Helper.merge_with_fractional_bits(
-        *Helper.send_command(file, 0x38)[3:7],
-        fractional_bits=Helper.send_command(file, 0x3F)[voltage_fractional_bits_index],
-        signed=True
-    )
-    v_inter = Helper.merge_with_fractional_bits(
-        *Helper.send_command(file, 0x39)[3:7],
-        fractional_bits=Helper.send_command(file, 0x41)[voltage_fractional_bits_index],
-        signed=True
-    )
+    # v_slope = Helper.merge_with_fractional_bits(
+    #     *Helper.send_command(file, 0x38)[3:7],
+    #     fractional_bits=Helper.send_command(file, 0x3F)[voltage_fractional_bits_index],
+    #     signed=True
+    # )
+    # v_inter = Helper.merge_with_fractional_bits(
+    #     *Helper.send_command(file, 0x39)[3:7],
+    #     fractional_bits=Helper.send_command(file, 0x41)[voltage_fractional_bits_index],
+    #     signed=True
+    # )
 
     current = Helper.merge(*voltage_and_current[5:7], signed=True)
 
-    cpga = Helper.send_command(file, 0x3D)[4]
+    # cpga = Helper.send_command(file, 0x3D)[4]
+    cpga = p.c_pga
     current_fractional_bits_index = int(3 + log2(cpga))
 
     adc_current = Helper.calculate_adc_from_raw_value(current, cpga)
 
-    c_slope = Helper.merge_with_fractional_bits(
-        *Helper.send_command(file, 0x3A)[3:7],
-        fractional_bits=Helper.send_command(file, 0x40)[current_fractional_bits_index],
-        signed=True
-    )
-    c_inter = Helper.merge_with_fractional_bits(
-        *Helper.send_command(file, 0x3B)[3:7],
-        fractional_bits=Helper.send_command(file, 0x42)[current_fractional_bits_index],
-        signed=True
-    )
+    # c_slope = Helper.merge_with_fractional_bits(
+    #     *Helper.send_command(file, 0x3A)[3:7],
+    #     fractional_bits=Helper.send_command(file, 0x40)[current_fractional_bits_index],
+    #     signed=True
+    # )
+    # c_inter = Helper.merge_with_fractional_bits(
+    #     *Helper.send_command(file, 0x3B)[3:7],
+    #     fractional_bits=Helper.send_command(file, 0x42)[current_fractional_bits_index],
+    #     signed=True
+    # )
 
     return {
-        'v': (adc_volts * v_slope) + v_inter,
-        'c': (adc_current * c_slope) + c_inter,
+        'v': (adc_volts * p.v_slope) + p.v_inter,
+        'c': (adc_current * p.c_slope) + p.c_inter,
     }
 
 

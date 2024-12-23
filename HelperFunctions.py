@@ -1,3 +1,4 @@
+from ParameterStateSingleton import ParameterStateSingleton
 from SerialHandler import SerialHandler
 from io import TextIOWrapper
 
@@ -63,11 +64,11 @@ class Helper:
 
         raw_response = bytearray(handler.readline())
 
-        print([hex(byte) for byte in raw_response[3:7]])
+        # print([hex(byte) for byte in raw_response[3:7]])
 
         response = [byte for byte in raw_response]
 
-        print(response)
+        # print(response)
         file.write(f"command: {command}, data_msb {data_msb}, data_lsb {data_lsb}, response {response}\n")
 
         return response
@@ -81,18 +82,23 @@ class Helper:
 
     @staticmethod
     def get_ranges(file: TextIOWrapper, for_voltage: bool = True) -> dict:
-        min = Helper.merge_command_result(Helper.send_command(file, 0x34 if for_voltage else 0x36), True)
-        max = Helper.merge_command_result(Helper.send_command(file, 0x35 if for_voltage else 0x37), True)
-        q_limits = Helper.send_command(file, 0x3E)
+        p = ParameterStateSingleton.get_instance()
+
+        # min = Helper.merge_command_result(Helper.send_command(file, 0x34 if for_voltage else 0x36), True)
+        # max = Helper.merge_command_result(Helper.send_command(file, 0x35 if for_voltage else 0x37), True)
+        min = p.v_min if for_voltage else p.c_min
+        max = p.v_max if for_voltage else p.c_max
+
+        # q_limits = Helper.send_command(file, 0x3E)
 
         return {
             'v_min' if for_voltage else 'c_min': Helper.calculate_range(
                 min,
-                q_limits[3 if for_voltage else 5]
+                p.q_limits[3 if for_voltage else 5]
             ),
             'v_max' if for_voltage else 'c_max': Helper.calculate_range(
                 max,
-                q_limits[4 if for_voltage else 6]
+                p.q_limits[4 if for_voltage else 6]
             ),
         }
 
