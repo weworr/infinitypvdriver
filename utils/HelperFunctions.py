@@ -1,3 +1,4 @@
+from CommandEnum import CommandEnum
 from ParameterStateSingleton import ParameterStateSingleton
 from SerialHandler import SerialHandler
 from io import TextIOWrapper
@@ -8,7 +9,7 @@ BYTE_SIZE = 8
 
 class Helper:
     @staticmethod
-    def merge_with_fractional_bits(*numbers: int, fractional_bits: int, signed: bool = False) -> float:
+    def merge_bytes_as_decimal_with_fractional_bits(*numbers: int, fractional_bits: int) -> float:
         result = 0.0
 
         sign = numbers[0] >> BYTE_SIZE - 1
@@ -20,13 +21,13 @@ class Helper:
                 result += int(bit) * 2 ** current_pow
                 current_pow -= 1
 
-        if signed and sign:
+        if sign:
             result -= 2 * 2 ** starting_pow
 
         return result
 
     @staticmethod
-    def merge(*numbers: int, signed: bool = False) -> int:
+    def merge_bytes_as_decimal(*numbers: int, signed: bool = True) -> int:
         result = 0
         sign = numbers[0] >> BYTE_SIZE - 1
 
@@ -40,27 +41,27 @@ class Helper:
         return result
 
     @staticmethod
-    def merge_command_result(command_result: list, signed: bool = False) -> int:
-        return Helper.merge(*command_result[3: 3 + (command_result[2] * 2)], signed=signed)
+    def merge_bytes_as_decimal_command_result(command_result: list) -> int:
+        return Helper.merge_bytes_as_decimal(*command_result[3: 3 + (command_result[2] * 2)])
 
     @staticmethod
     def send_command(
         # file: TextIOWrapper,
-        command: int,
+        command: CommandEnum,
         data_msb: int = 0x00,
         data_lsb: int = 0x00
     ) -> list:
-        print(f'-------------------%s-------------------' % hex(command))
+        print(f'-------------------%s-------------------' % hex(command.value))
         handler = SerialHandler.get_instance()
 
-        packet = bytearray([0x66, command, data_msb, data_lsb, 0x00, 0x34])
+        packet = bytearray([0x66, command.value, data_msb, data_lsb, 0x00, 0x34])
         handler.write(packet)
 
         raw_response = bytearray(handler.readline())
         response = [byte for byte in raw_response]
 
         # print(response)
-        # file.write(f"command: {command}, data_msb {data_msb}, data_lsb {data_lsb}, response {response}\n")
+        # file.write(f"command: {command.value}, data_msb {data_msb}, data_lsb {data_lsb}, response {response}\n")
 
         return response
 
@@ -109,48 +110,44 @@ class Helper:
 
     @staticmethod
     def get_v_min() -> int:
-        return Helper.merge_command_result(Helper.send_command(0x34), True)
+        return Helper.merge_bytes_as_decimal_command_result(Helper.send_command(CommandEnum.GET_VMIN))
 
     @staticmethod
     def get_v_max() -> int:
-        return Helper.merge_command_result(Helper.send_command(0x35), True)
+        return Helper.merge_bytes_as_decimal_command_result(Helper.send_command(CommandEnum.GET_VMAX))
 
     @staticmethod
     def get_v_slope(vpga: int) -> float:
-        return Helper.merge_with_fractional_bits(
-            *Helper.send_command(0x38)[3:7],
-            fractional_bits=Helper.send_command(0x3F)[Helper.calculate_byte_to_read_index(vpga)],
-            signed=True
+        return Helper.merge_bytes_as_decimal_with_fractional_bits(
+            *Helper.send_command(CommandEnum.GET_VSLOPE)[3:7],
+            fractional_bits=Helper.send_command(CommandEnum.GET_QVSLOPE)[Helper.calculate_byte_to_read_index(vpga)]
     )
 
     @staticmethod
     def get_v_inter(vpga: int) -> float:
-        return Helper.merge_with_fractional_bits(
-            *Helper.send_command(0x39)[3:7],
-            fractional_bits=Helper.send_command(0x41)[Helper.calculate_byte_to_read_index(vpga)],
-            signed=True
+        return Helper.merge_bytes_as_decimal_with_fractional_bits(
+            *Helper.send_command(CommandEnum.GET_VINTER)[3:7],
+            fractional_bits=Helper.send_command(CommandEnum.GET_QVINTER)[Helper.calculate_byte_to_read_index(vpga)]
         )
 
     @staticmethod
     def get_c_min() -> int:
-        return Helper.merge_command_result(Helper.send_command(0x36), True)
+        return Helper.merge_bytes_as_decimal_command_result(Helper.send_command(CommandEnum.GET_CMIN))
 
     @staticmethod
     def get_c_max() -> int:
-        return Helper.merge_command_result(Helper.send_command(0x37), True)
+        return Helper.merge_bytes_as_decimal_command_result(Helper.send_command(CommandEnum.GET_CMAX))
 
     @staticmethod
     def get_c_slope(cpga: int) -> float:
-        return Helper.merge_with_fractional_bits(
-            *Helper.send_command(0x3A)[3:7],
-            fractional_bits=Helper.send_command(0x40)[Helper.calculate_byte_to_read_index(cpga)],
-            signed=True
+        return Helper.merge_bytes_as_decimal_with_fractional_bits(
+            *Helper.send_command(CommandEnum.GET_CSLOPE)[3:7],
+            fractional_bits=Helper.send_command(CommandEnum.GET_QCSLOPE)[Helper.calculate_byte_to_read_index(cpga)]
         )
 
     @staticmethod
     def get_c_inter(cpga: int) -> float:
-        return Helper.merge_with_fractional_bits(
-            *Helper.send_command(0x3B)[3:7],
-            fractional_bits=Helper.send_command(0x42)[Helper.calculate_byte_to_read_index(cpga)],
-            signed=True
+        return Helper.merge_bytes_as_decimal_with_fractional_bits(
+            *Helper.send_command(CommandEnum.GET_CINTER)[3:7],
+            fractional_bits=Helper.send_command(CommandEnum.GET_QCINTER)[Helper.calculate_byte_to_read_index(cpga)]
         )

@@ -24,24 +24,24 @@ class TestHelperFunctions(unittest.TestCase):
 
     def test_merge_command_result_with_signed_true(self) -> None:
         self.assertEqual(
-            Helper.merge_command_result([102, 1, 2, 191, 235, 254, 226, 0, 52, 52], True),
+            Helper.merge_bytes_as_decimal_command_result([102, 1, 2, 191, 235, 254, 226, 0, 52, 52]),
             -1075052830
         )
 
     def test_merge_merge_with_fractional_bits_with_signed_true_self(self) -> None:
         self.assertEqual(
-            Helper.merge_with_fractional_bits(125, 240, 194, 48, fractional_bits=30, signed=True),
+            Helper.merge_bytes_as_decimal_with_fractional_bits(125, 240, 194, 48, fractional_bits=30),
             1.9678197354078293
         )
 
     def test_merge_with_signed_true(self) -> None:
         self.assertEqual(
-            Helper.merge(0, 142, signed=True),
+            Helper.merge_bytes_as_decimal(0, 142),
             142
         )
 
         self.assertEqual(
-            Helper.merge(247, 64, signed=True),
+            Helper.merge_bytes_as_decimal(247, 64),
             -2240
         )
 

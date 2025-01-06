@@ -9,8 +9,8 @@ from SerialHandler import SerialHandler
 
 def voltage_and_current(file: TextIOWrapper) -> dict:
     # --- voltage ---
-    voltage_and_current = Helper.send_command(0x2C)
-    voltage = Helper.merge(*voltage_and_current[3:5], signed=True)
+    voltage_and_current = Helper.send_command(CommandEnum.GET_VOLTAGE_AND_CURRENT)
+    voltage = Helper.merge_bytes_as_decimal(*voltage_and_current[3:5])
 
     # vpga = Helper.send_command(file, 0x3C)[4]
     p = ParameterStateSingleton().get_instance()
@@ -30,7 +30,7 @@ def voltage_and_current(file: TextIOWrapper) -> dict:
     #     signed=True
     # )
 
-    current = Helper.merge(*voltage_and_current[5:7], signed=True)
+    current = Helper.merge_bytes_as_decimal(*voltage_and_current[5:7])
 
     # cpga = Helper.send_command(file, 0x3D)[4]
     cpga = p.c_pga
@@ -56,17 +56,65 @@ def voltage_and_current(file: TextIOWrapper) -> dict:
 
 
 def set_serial_port(port: str) -> None:
+    """
+    Ustawia port, z którym będzie komunikował się sterownik.
+
+    W przypadku, gdy połączenie do dowolnego portu jest już nawiązane funkcja wyrzuci błąd.
+    :param port: Port do którego podłączone jest urządzenie
+    """
     if SerialHandler.is_initialized():
-        raise Exception("SerialHandler is already initialized")
+        raise Exception("SerialHandler is already initialized.")
 
     SerialHandler.get_instance(port)
 
 
+# ===========================
+# region General Commands
+# ===========================
 def get_internal_idn() -> int:
     """
-    :return: Internal IDN of the device
+    :return: Numer identyfikacyjny urządzenia
     """
-    return Helper.merge(*Helper.send_command(CommandEnum.GET_INTERNAL_IDN.value)[3:7])
+    return Helper.merge_bytes_as_decimal(
+        *Helper.send_command(CommandEnum.GET_INTERNAL_IDN)[3:7],
+        signed=False
+    )
+
+
+def active_unit(channel: int) -> None:
+    """
+    Ustawia komunikację z jedynm z ośmiu kanałów.
+    :param channel: Kanał na którego przestawiamy komunikację. Należy podać liczbę całkowitą z przedziału od 0 do 7.
+    """
+    if 0 > channel or channel > 7:
+        raise Exception("Channel must be between 0 and 7.")
+
+    Helper.send_command(CommandEnum.ACTIVE_UNIT, data_lsb=channel)
+
+
+def get_unit_idn() -> int:
+    """
+    :return: Numer identyfikacyjny kanału.
+    """
+    return Helper.merge_bytes_as_decimal(*Helper.send_command(CommandEnum.GET_UNIT_IDN)[3:7])
+
+# endregion General Commands
+
+
+# ===========================
+# region Calibration Commands
+# ===========================
+def get_vmin() -> int:
+    return Helper.get_v_min()
+
+# endregion Calibration Commands
+
+
+# ===========================
+# region Working Commands
+# ===========================
+
+# endregion Working Commands
 
 
 def init() -> None:
@@ -74,11 +122,12 @@ def init() -> None:
 
     state.c_pga = 1
     state.v_pga = 1
-    state.q_limits = Helper.send_command(0x3E)
+    state.q_limits = Helper.send_command(CommandEnum.GET_QLIMITS)
 
 
 def main():
     init()
+    exit()
 
     SerialHandler.get_instance('/dev/pts/2')
     with open('logs.txt', 'a') as file:
@@ -188,10 +237,10 @@ def main():
                 case 'c_ranges':
                     response = Helper.get_ranges(file, False)
                 case 'v_min':
-                    response = Helper.merge_command_result(Helper.send_command(file, 0x34), signed=True)
+                    response = Helper.merge_bytes_as_decimal_command_result(Helper.send_command(file, 0x34))
                     # response = Helper.merge_command_result(ParameterStateSingleton.get_instance().v_min, signed=True)
                 case 'v_max':
-                    response = Helper.merge_command_result(ParameterStateSingleton.get_instance().v_max, signed=True)
+                    response = Helper.merge_bytes_as_decimal_command_result(ParameterStateSingleton.get_instance().v_max)
                     # response = Helper.merge_command_result(Helper.send_command(file, 0x35), signed=True)
                 case 'q':
                     return

@@ -9,8 +9,15 @@ class MockSerial:
         self.__data = data
 
     def readline(self) -> bytes:
-        if self.__data == bytearray([0x66, CommandEnum.GET_INTERNAL_IDN.value, 0, 0, 0x00, 0x34]):
+        print(self.__data[1])
+        if self.__data[1] == CommandEnum.GET_INTERNAL_IDN.value:
             return bytes([102, 1, 2, 0, 142, 247, 64, 0, 44, 52])
+
+        if self.__data[1] == CommandEnum.ACTIVE_UNIT.value:
+            return bytes([102, 1, 1, 0, self.__data[4], 0, 0, 0, 41, 52])
+
+        if self.__data[1] == CommandEnum.GET_UNIT_IDN.value:
+            return bytes([102, 1, 1, 0, 142, 247, 64, 0, 41, 52])
 
         if self.__data == bytearray([0x66, 0x2C, 0, 0, 0x00, 0x34]):
             return bytes([102, 1, 2, 0, 142, 247, 64, 0, 44, 52])
