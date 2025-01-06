@@ -109,44 +109,44 @@ class Helper:
         return (-1 * (2 ** 16 - raw_adc)) * (1 / gain) * (62.5 * 10 ** (-6))
 
     @staticmethod
-    def get_v_min() -> int:
+    def get_vmin() -> int:
         return Helper.merge_bytes_as_decimal_command_result(Helper.send_command(CommandEnum.GET_VMIN))
 
     @staticmethod
-    def get_v_max() -> int:
+    def get_vmax() -> int:
         return Helper.merge_bytes_as_decimal_command_result(Helper.send_command(CommandEnum.GET_VMAX))
 
     @staticmethod
-    def get_v_slope(vpga: int) -> float:
+    def get_vslope(vpga: int) -> float:
         return Helper.merge_bytes_as_decimal_with_fractional_bits(
             *Helper.send_command(CommandEnum.GET_VSLOPE)[3:7],
             fractional_bits=Helper.send_command(CommandEnum.GET_QVSLOPE)[Helper.calculate_byte_to_read_index(vpga)]
     )
 
     @staticmethod
-    def get_v_inter(vpga: int) -> float:
+    def get_vinter(vpga: int) -> float:
         return Helper.merge_bytes_as_decimal_with_fractional_bits(
             *Helper.send_command(CommandEnum.GET_VINTER)[3:7],
             fractional_bits=Helper.send_command(CommandEnum.GET_QVINTER)[Helper.calculate_byte_to_read_index(vpga)]
         )
 
     @staticmethod
-    def get_c_min() -> int:
+    def get_cmin() -> int:
         return Helper.merge_bytes_as_decimal_command_result(Helper.send_command(CommandEnum.GET_CMIN))
 
     @staticmethod
-    def get_c_max() -> int:
+    def get_cmax() -> int:
         return Helper.merge_bytes_as_decimal_command_result(Helper.send_command(CommandEnum.GET_CMAX))
 
     @staticmethod
-    def get_c_slope(cpga: int) -> float:
+    def get_cslope(cpga: int) -> float:
         return Helper.merge_bytes_as_decimal_with_fractional_bits(
             *Helper.send_command(CommandEnum.GET_CSLOPE)[3:7],
             fractional_bits=Helper.send_command(CommandEnum.GET_QCSLOPE)[Helper.calculate_byte_to_read_index(cpga)]
         )
 
     @staticmethod
-    def get_c_inter(cpga: int) -> float:
+    def get_cinter(cpga: int) -> float:
         return Helper.merge_bytes_as_decimal_with_fractional_bits(
             *Helper.send_command(CommandEnum.GET_CINTER)[3:7],
             fractional_bits=Helper.send_command(CommandEnum.GET_QCINTER)[Helper.calculate_byte_to_read_index(cpga)]

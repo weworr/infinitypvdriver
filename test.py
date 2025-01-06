@@ -105,7 +105,19 @@ def get_unit_idn() -> int:
 # region Calibration Commands
 # ===========================
 def get_vmin() -> int:
-    return Helper.get_v_min()
+    return Helper.get_vmin()
+
+
+def get_vmax() -> int:
+    return Helper.get_vmax()
+
+
+def get_cmin() -> int:
+    return Helper.get_vmax()
+
+
+def get_cmax() -> int:
+    return Helper.get_cmax()
 
 # endregion Calibration Commands
 
@@ -113,6 +125,9 @@ def get_vmin() -> int:
 # ===========================
 # region Working Commands
 # ===========================
+
+def set_mode():
+    return None
 
 # endregion Working Commands
 
