@@ -188,10 +188,14 @@ class ParametersState:
 
         self.v_min = Helper.get_v_min()
         self.v_max = Helper.get_v_max()
-        self.v_slope = Helper.get_v_slope(self.v_pga)
-        self.v_inter = Helper.get_v_slope(self.v_pga)
+
+        if self.v_pga is not None:
+            self.v_slope = Helper.get_v_slope(self.v_pga)
+            self.v_inter = Helper.get_v_inter(self.v_pga)
 
         self.c_min = Helper.get_c_min()
         self.c_max = Helper.get_c_max()
-        self.c_slope = Helper.get_c_slope(self.c_pga)
-        self.c_inter = Helper.get_c_slope(self.c_pga)
+
+        if self.c_pga is not None:
+            self.c_slope = Helper.get_c_slope(self.c_pga)
+            self.c_inter = Helper.get_c_inter(self.c_pga)

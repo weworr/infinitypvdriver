@@ -128,6 +128,7 @@ class Helper:
         return Helper.merge_with_fractional_bits(
             *Helper.send_command(0x39)[3:7],
             fractional_bits=Helper.send_command(0x41)[Helper.calculate_byte_to_read_index(vpga)],
+            signed=True
         )
 
     @staticmethod

@@ -6,7 +6,7 @@ from utils.HelperFunctions import Helper
 from mock.MockSerial import MockSerial
 
 from SerialHandler import SerialHandler
-from test import voltage_and_current
+from test import voltage_and_current, init
 
 
 class TestHelperFunctions(unittest.TestCase):
@@ -17,6 +17,7 @@ class TestHelperFunctions(unittest.TestCase):
     def setUp(self) -> None:
         patch('SerialHandler.SerialHandler.get_instance', return_value=self.__mock_serial).start()
         self.__mock_serial_handler.get_instance.return_value = TestHelperFunctions.__mock_serial
+        init()
 
     def tearDown(self) -> None:
         patch.stopall()

@@ -9,7 +9,7 @@ from SerialHandler import SerialHandler
 
 def voltage_and_current(file: TextIOWrapper) -> dict:
     # --- voltage ---
-    voltage_and_current = Helper.send_command(file, 0x2C)
+    voltage_and_current = Helper.send_command(0x2C)
     voltage = Helper.merge(*voltage_and_current[3:5], signed=True)
 
     # vpga = Helper.send_command(file, 0x3C)[4]
@@ -69,7 +69,17 @@ def get_internal_idn() -> int:
     return Helper.merge(*Helper.send_command(CommandEnum.GET_INTERNAL_IDN.value)[3:7])
 
 
+def init() -> None:
+    state = ParameterStateSingleton.get_instance()
+
+    state.c_pga = 1
+    state.v_pga = 1
+    state.q_limits = Helper.send_command(0x3E)
+
+
 def main():
+    init()
+
     SerialHandler.get_instance('/dev/pts/2')
     with open('logs.txt', 'a') as file:
         file.write('------------------------------------------------------\n')
