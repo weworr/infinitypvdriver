@@ -1,19 +1,29 @@
 import time
 import serial
 
+from mock.MockSerial import MockSerial
+
 global error
 
+
+MOCK = True
+
+
 class SerialHandler:
-    __instance: serial.Serial|None = None
+    __instance: serial.Serial|MockSerial|None = None
 
     def __init__(self):
         pass
 
     @classmethod
-    def get_instance(cls, port: str|None = None) -> serial.Serial:
+    def get_instance(cls, port: str|None = 'COM11') -> serial.Serial:
         if cls.__instance is None:
             if port is None:
                 raise RuntimeError("Port must be specified before serial handler initialisation")
+
+            if MOCK:
+                cls.__instance = MockSerial()
+                return cls.__instance
 
             cls.__instance = serial.Serial(
                 port,
@@ -28,12 +38,16 @@ class SerialHandler:
 
         return cls.__instance
 
+    @classmethod
+    def is_initialized(cls) -> bool:
+        return cls.__instance is not None
+
 
 def module_decorator(func: callable) -> callable:
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except Exception as e:  
+        except Exception as e:
             if 'serialHandler' in globals() and isinstance(serialHandler, serial.Serial) and serialHandler.is_open:
                 serialHandler.close()
 

@@ -5,6 +5,7 @@ from math import log2
 
 BYTE_SIZE = 8
 
+
 class Helper:
     @staticmethod
     def merge_with_fractional_bits(*numbers: int, fractional_bits: int, signed: bool = False) -> float:

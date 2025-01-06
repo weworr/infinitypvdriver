@@ -1,8 +1,11 @@
 from io import TextIOWrapper
 from math import log2
-from HelperFunctions import Helper
+
+from CommandEnum import CommandEnum
+from utils.HelperFunctions import Helper
 from ParameterStateSingleton import ParameterStateSingleton
 from SerialHandler import SerialHandler
+
 
 def voltage_and_current(file: TextIOWrapper) -> dict:
     # --- voltage ---
@@ -52,10 +55,23 @@ def voltage_and_current(file: TextIOWrapper) -> dict:
     }
 
 
+def set_serial_port(port: str) -> None:
+    if SerialHandler.is_initialized():
+        raise Exception("SerialHandler is already initialized")
+
+    SerialHandler.get_instance(port)
+
+
+def get_internal_idn() -> int:
+    """
+    :return: Internal IDN of the device
+    """
+    return Helper.merge(*Helper.send_command(CommandEnum.GET_INTERNAL_IDN.value)[3:7])
+
+
 def main():
     SerialHandler.get_instance('/dev/pts/2')
-
-    with open('testy.txt', 'a') as file:
+    with open('logs.txt', 'a') as file:
         file.write('------------------------------------------------------\n')
 
         while True:
@@ -151,7 +167,7 @@ def main():
                     skip = True
 
             if not skip:
-                response = Helper.send_command(file, command, data_msb, data_lsb)
+                response = Helper.send_command(command, data_msb, data_lsb)
                 continue
 
             match keyboard_input:

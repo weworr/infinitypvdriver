@@ -1,3 +1,6 @@
+from CommandEnum import CommandEnum
+
+
 class MockSerial:
     def __init__(self):
         self.__data = bytearray()
@@ -6,6 +9,9 @@ class MockSerial:
         self.__data = data
 
     def readline(self) -> bytes:
+        if self.__data == bytearray([0x66, CommandEnum.GET_INTERNAL_IDN.value, 0, 0, 0x00, 0x34]):
+            return bytes([102, 1, 2, 0, 142, 247, 64, 0, 44, 52])
+
         if self.__data == bytearray([0x66, 0x2C, 0, 0, 0x00, 0x34]):
             return bytes([102, 1, 2, 0, 142, 247, 64, 0, 44, 52])
 
@@ -38,6 +44,9 @@ class MockSerial:
 
         if self.__data == bytearray([0x66, 0x42, 0, 0, 0x00, 0x34]):
             return bytes([102, 1, 2, 31, 31, 31, 31, 0, 66, 52])
+
+        if self.__data == bytearray([0x66, 0x43, 0, 1, 0x00, 0x34]):
+            return bytes([102, 1, 1, 0, 1, 0, 0, 0, 67, 52])
 
         if self.__data == bytearray([0x66, 0x36, 0, 0, 0x00, 0x34]):
             return bytes([102, 1, 2, 192, 0, 0, 0, 0, 54, 52])

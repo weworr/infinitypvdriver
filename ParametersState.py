@@ -1,6 +1,3 @@
-from HelperFunctions import Helper
-
-
 class ParametersState:
     def __init__(self):
         self.__active_channel: int|None = None
@@ -187,6 +184,8 @@ class ParametersState:
         self.__c_step = value
 
     def __update_values(self) -> None:
+        from utils.HelperFunctions import Helper
+
         self.v_min = Helper.get_v_min()
         self.v_max = Helper.get_v_max()
         self.v_slope = Helper.get_v_slope(self.v_pga)

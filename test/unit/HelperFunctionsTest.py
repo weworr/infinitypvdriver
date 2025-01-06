@@ -2,8 +2,8 @@ import unittest
 from io import TextIOWrapper
 from unittest.mock import Mock, patch
 
-from HelperFunctions import Helper
-from MockSerial import MockSerial
+from utils.HelperFunctions import Helper
+from mock.MockSerial import MockSerial
 
 from SerialHandler import SerialHandler
 from test import voltage_and_current
