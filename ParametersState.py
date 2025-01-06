@@ -1,35 +1,13 @@
-class ParametersState:
-    # active_channel: int = None
-    #
-    # v_pga: int = None
-    # v_min: int = None
-    # v_max: int = None
-    # v_slope: int = None
-    # v_inter: int = None
-    #
-    # c_pga: int = None
-    # c_min: int = None
-    # c_max: int = None
-    # c_slope: int = None
-    # c_inter: int = None
-    #
-    # q_limits: list = []
-    # q_c_slope: list = []
-    # q_c_inter: list = []
-    # q_v_slope: list = []
-    # q_v_inter: list = []
-    #
-    # mode: str = None
-    # v_ref: int = None
-    # v_step: int = None
-    # c_step: int = None
+from HelperFunctions import Helper
 
+
+class ParametersState:
     def __init__(self):
         self.__active_channel: int|None = None
 
         self.__v_pga: int|None = None
         self.__v_min: int|None = None
-        self.__v_max: int|None = 10
+        self.__v_max: int|None = None
         self.__v_slope: int|None = None
         self.__v_inter: int|None = None
 
@@ -58,6 +36,8 @@ class ParametersState:
     def active_channel(self, value):
         self.__active_channel = value
 
+        self.__update_values()
+
     @property
     def v_pga(self) -> int:
         return self.__v_pga
@@ -65,6 +45,8 @@ class ParametersState:
     @v_pga.setter
     def v_pga(self, value: int):
         self.__v_pga = value
+
+        self.__update_values()
 
     @property
     def v_min(self):
@@ -105,6 +87,8 @@ class ParametersState:
     @c_pga.setter
     def c_pga(self, value):
         self.__c_pga = value
+
+        self.__update_values()
 
     @property
     def c_min(self):
@@ -201,3 +185,14 @@ class ParametersState:
     @c_step.setter
     def c_step(self, value):
         self.__c_step = value
+
+    def __update_values(self) -> None:
+        self.v_min = Helper.get_v_min()
+        self.v_max = Helper.get_v_max()
+        self.v_slope = Helper.get_v_slope(self.v_pga)
+        self.v_inter = Helper.get_v_slope(self.v_pga)
+
+        self.c_min = Helper.get_c_min()
+        self.c_max = Helper.get_c_max()
+        self.c_slope = Helper.get_c_slope(self.c_pga)
+        self.c_inter = Helper.get_c_slope(self.c_pga)

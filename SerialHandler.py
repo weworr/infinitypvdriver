@@ -49,22 +49,6 @@ def create_instance() -> str:
 
     return 'Open'
 
-
-@module_decorator
-def send_command() -> str:
-    packet = bytearray()
-    packet.append(0x66)
-    packet.append(0x10)
-    packet.append(0x00)
-    packet.append(0x00)
-    packet.append(0x00)
-    packet.append(0x34)
-
-    serialHandler.write(packet)
-
-    return ''.join([str(int(byte)) for byte in bytearray(serialHandler.readline())])
-
-
 @module_decorator
 def close_connection() -> str:
     serialHandler.close()

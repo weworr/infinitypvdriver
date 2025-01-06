@@ -1,6 +1,7 @@
 from ParameterStateSingleton import ParameterStateSingleton
 from SerialHandler import SerialHandler
 from io import TextIOWrapper
+from math import log2
 
 BYTE_SIZE = 8
 
@@ -26,7 +27,6 @@ class Helper:
     @staticmethod
     def merge(*numbers: int, signed: bool = False) -> int:
         result = 0
-
         sign = numbers[0] >> BYTE_SIZE - 1
 
         for number in numbers:
@@ -44,7 +44,7 @@ class Helper:
 
     @staticmethod
     def send_command(
-        file: TextIOWrapper,
+        # file: TextIOWrapper,
         command: int,
         data_msb: int = 0x00,
         data_lsb: int = 0x00
@@ -53,23 +53,13 @@ class Helper:
         handler = SerialHandler.get_instance()
 
         packet = bytearray([0x66, command, data_msb, data_lsb, 0x00, 0x34])
-        # packet.append(0x66)
-        # packet.append(command)
-        # packet.append(data_msb)
-        # packet.append(data_lsb)
-        # packet.append(0x00)
-        # packet.append(0x34)
-
         handler.write(packet)
 
         raw_response = bytearray(handler.readline())
-
-        # print([hex(byte) for byte in raw_response[3:7]])
-
         response = [byte for byte in raw_response]
 
         # print(response)
-        file.write(f"command: {command}, data_msb {data_msb}, data_lsb {data_lsb}, response {response}\n")
+        # file.write(f"command: {command}, data_msb {data_msb}, data_lsb {data_lsb}, response {response}\n")
 
         return response
 
@@ -103,9 +93,62 @@ class Helper:
         }
 
     @staticmethod
+    def calculate_byte_to_read_index(pga_configuration: int) -> int:
+        """
+        Służy do obliczenia indexu bajtu, który trzeba odczytać z funkcji [0x3F - 0x42]
+        """
+        return int(3 + log2(pga_configuration))
+
+    @staticmethod
     def calculate_adc_from_raw_value(raw_adc: float, gain: int) -> float:
-        print(f"rawadc {raw_adc}")
         if raw_adc < 2 ** 15:
             return (1 / gain) * (62.5 * 10 ** (-6)) * raw_adc
 
         return (-1 * (2 ** 16 - raw_adc)) * (1 / gain) * (62.5 * 10 ** (-6))
+
+    @staticmethod
+    def get_v_min() -> int:
+        return Helper.merge_command_result(Helper.send_command(0x34), True)
+
+    @staticmethod
+    def get_v_max() -> int:
+        return Helper.merge_command_result(Helper.send_command(0x35), True)
+
+    @staticmethod
+    def get_v_slope(vpga: int) -> float:
+        return Helper.merge_with_fractional_bits(
+            *Helper.send_command(0x38)[3:7],
+            fractional_bits=Helper.send_command(0x3F)[Helper.calculate_byte_to_read_index(vpga)],
+            signed=True
+    )
+
+    @staticmethod
+    def get_v_inter(vpga: int) -> float:
+        return Helper.merge_with_fractional_bits(
+            *Helper.send_command(0x39)[3:7],
+            fractional_bits=Helper.send_command(0x41)[Helper.calculate_byte_to_read_index(vpga)],
+        )
+
+    @staticmethod
+    def get_c_min() -> int:
+        return Helper.merge_command_result(Helper.send_command(0x36), True)
+
+    @staticmethod
+    def get_c_max() -> int:
+        return Helper.merge_command_result(Helper.send_command(0x37), True)
+
+    @staticmethod
+    def get_c_slope(cpga: int) -> float:
+        return Helper.merge_with_fractional_bits(
+            *Helper.send_command(0x3A)[3:7],
+            fractional_bits=Helper.send_command(0x40)[Helper.calculate_byte_to_read_index(cpga)],
+            signed=True
+        )
+
+    @staticmethod
+    def get_c_inter(cpga: int) -> float:
+        return Helper.merge_with_fractional_bits(
+            *Helper.send_command(0x3B)[3:7],
+            fractional_bits=Helper.send_command(0x42)[Helper.calculate_byte_to_read_index(cpga)],
+            signed=True
+        )
