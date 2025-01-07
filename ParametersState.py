@@ -182,14 +182,14 @@ class ParametersState:
         self.__c_step = value
 
     def regenerate_soft_values(self) -> None:
-        from utils.HelperFunctions import Helper
+        from service.DriverService import DriverService
 
-        self.v_min = Helper.get_v_min()
-        self.v_max = Helper.get_v_max()
-        self.v_slope = Helper.get_v_slope()
-        self.v_inter = Helper.get_v_inter()
+        self.v_min = DriverService.get_v_min()
+        self.v_max = DriverService.get_v_max()
+        self.v_slope = DriverService.get_v_slope()
+        self.v_inter = DriverService.get_v_inter()
 
-        self.c_min = Helper.get_c_min()
-        self.c_max = Helper.get_c_max()
-        self.c_slope = Helper.get_c_slope()
-        self.c_inter = Helper.get_c_inter()
+        self.c_min = DriverService.get_c_min()
+        self.c_max = DriverService.get_c_max()
+        self.c_slope = DriverService.get_c_slope()
+        self.c_inter = DriverService.get_c_inter()
