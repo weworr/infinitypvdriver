@@ -310,7 +310,9 @@ def main():
                     response = Helper.merge_bytes_as_decimal_command_result(Helper.send_command(file, 0x34))
                     # response = Helper.merge_command_result(ParameterStateSingleton.get_instance().v_min, signed=True)
                 case 'v_max':
-                    response = Helper.merge_bytes_as_decimal_command_result(ParameterStateSingleton.get_instance().v_max)
+                    response = Helper.merge_bytes_as_decimal_command_result(
+                        ParameterStateSingleton.get_instance().v_max
+                    )
                     # response = Helper.merge_command_result(Helper.send_command(file, 0x35), signed=True)
                 case 'q':
                     return

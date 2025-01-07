@@ -1,6 +1,6 @@
 class ParametersState:
-    def __init__(self):
-        self.__active_channel: int | None = None
+    def __init__(self, channel: int):
+        self.__channel: int = channel
 
         self.__v_pga: int = 1
         self.__v_min: int | None = None
@@ -14,11 +14,11 @@ class ParametersState:
         self.__c_slope: int | None = None
         self.__c_inter: int | None = None
 
-        self.__q_limits: list = []
-        self.__q_c_slope: list = []
-        self.__q_c_inter: list = []
-        self.__q_v_slope: list = []
-        self.__q_v_inter: list = []
+        self.__q_limits: list[int] = []
+        self.__q_c_slope: list[int] = []
+        self.__q_c_inter: list[int] = []
+        self.__q_v_slope: list[int] = []
+        self.__q_v_inter: list[int] = []
 
         self.__mode: str | None = None
         self.__v_ref: int | None = None
@@ -26,14 +26,12 @@ class ParametersState:
         self.__c_step: int | None = None
 
     @property
-    def active_channel(self) -> int | None:
-        return self.__active_channel
+    def channel(self) -> int:
+        return self.__channel
 
-    @active_channel.setter
-    def active_channel(self, value: int) -> None:
-        self.__active_channel = value
-
-        self.__update_values()
+    @channel.setter
+    def channel(self, value: int) -> None:
+        self.__channel = value
 
     @property
     def v_pga(self) -> int:
@@ -43,7 +41,7 @@ class ParametersState:
     def v_pga(self, value: int) -> None:
         self.__v_pga = value
 
-        self.__update_values()
+        self.regenerate_soft_values()
 
     @property
     def v_min(self) -> int | None:
@@ -85,7 +83,7 @@ class ParametersState:
     def c_pga(self, value: int) -> None:
         self.__c_pga = value
 
-        self.__update_values()
+        self.regenerate_soft_values()
 
     @property
     def c_min(self) -> int | None:
@@ -188,14 +186,10 @@ class ParametersState:
 
         self.v_min = Helper.get_v_min()
         self.v_max = Helper.get_v_max()
-
-        if self.v_pga is not None:
-            self.v_slope = Helper.get_v_slope()
-            self.v_inter = Helper.get_v_inter()
+        self.v_slope = Helper.get_v_slope()
+        self.v_inter = Helper.get_v_inter()
 
         self.c_min = Helper.get_c_min()
         self.c_max = Helper.get_c_max()
-
-        if self.c_pga is not None:
-            self.c_slope = Helper.get_c_slope()
-            self.c_inter = Helper.get_c_inter()
+        self.c_slope = Helper.get_c_slope()
+        self.c_inter = Helper.get_c_inter()

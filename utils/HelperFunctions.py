@@ -24,10 +24,11 @@ class Helper:
 
     @staticmethod
     def init_driver():
-        p = ParameterStateSingleton.get_instance()
+        ParameterStateSingleton.set_active_channel(1)
 
-        p.regenerate_soft_values()
-        p.q_limits = Helper.send_command(CommandEnum.GET_Q_LIMITS)
+        for instance in ParameterStateSingleton.get_all_instances():
+            instance.regenerate_soft_values()
+            instance.q_limits = Helper.send_command(CommandEnum.GET_Q_LIMITS)
 
     @staticmethod
     def merge_bytes_as_decimal(*numbers: int, signed: bool = True) -> int:
@@ -103,7 +104,7 @@ class Helper:
 
     @staticmethod
     def active_unit(channel: int) -> None:
-        if 0 > channel or channel > 7:
+        if channel < 0 or channel > 7:
             raise Exception("Channel must be between 0 and 7.")
 
         Helper.send_command(CommandEnum.ACTIVE_UNIT, data_lsb=channel)
@@ -111,7 +112,7 @@ class Helper:
         # TODO Powinniśmy trzymać konfiurację per channel. Jakby mieli się przełączać to chyba nie zmieni się konfiguracja co?
         # Trzeba to będzie też testnąć. ;)
 
-        ParameterStateSingleton.get_instance().active_channel = channel
+        ParameterStateSingleton.active_channel = channel
 
     @staticmethod
     def get_v_min() -> int:

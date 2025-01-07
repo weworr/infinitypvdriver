@@ -10,13 +10,13 @@ MOCK = True
 
 
 class SerialHandler:
-    __instance: serial.Serial|MockSerial|None = None
+    __instance: serial.Serial | MockSerial | None = None
 
     def __init__(self):
         pass
 
     @classmethod
-    def get_instance(cls, port: str|None = 'COM11') -> serial.Serial:
+    def get_instance(cls, port: str | None = 'COM11') -> serial.Serial:
         if cls.__instance is None:
             if port is None:
                 raise RuntimeError("Port must be specified before serial handler initialisation")
@@ -62,6 +62,7 @@ def create_instance() -> str:
     serialHandler = SerialHandler().get_instance()
 
     return 'Open'
+
 
 @module_decorator
 def close_connection() -> str:
