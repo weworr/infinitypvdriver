@@ -26,8 +26,7 @@ class Helper:
     def init_driver():
         p = ParameterStateSingleton.get_instance()
 
-        p.c_pga = 1
-        p.v_pga = 1
+        p.regenerate_soft_values()
         p.q_limits = Helper.send_command(CommandEnum.GET_Q_LIMITS)
 
     @staticmethod

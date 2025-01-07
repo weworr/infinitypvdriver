@@ -1,18 +1,18 @@
 class ParametersState:
     def __init__(self):
-        self.__active_channel: int|None = None
+        self.__active_channel: int | None = None
 
-        self.__v_pga: int|None = None
-        self.__v_min: int|None = None
-        self.__v_max: int|None = None
-        self.__v_slope: int|None = None
-        self.__v_inter: int|None = None
+        self.__v_pga: int = 1
+        self.__v_min: int | None = None
+        self.__v_max: int | None = None
+        self.__v_slope: int | None = None
+        self.__v_inter: int | None = None
 
-        self.__c_pga: int|None = None
-        self.__c_min: int|None = None
-        self.__c_max: int|None = None
-        self.__c_slope: int|None = None
-        self.__c_inter: int|None = None
+        self.__c_pga: int = 1
+        self.__c_min: int | None = None
+        self.__c_max: int | None = None
+        self.__c_slope: int | None = None
+        self.__c_inter: int | None = None
 
         self.__q_limits: list = []
         self.__q_c_slope: list = []
@@ -20,17 +20,17 @@ class ParametersState:
         self.__q_v_slope: list = []
         self.__q_v_inter: list = []
 
-        self.__mode: str|None = None
-        self.__v_ref: int|None = None
-        self.__v_step: int|None = None
-        self.__c_step: int|None = None
+        self.__mode: str | None = None
+        self.__v_ref: int | None = None
+        self.__v_step: int | None = None
+        self.__c_step: int | None = None
 
     @property
-    def active_channel(self):
+    def active_channel(self) -> int | None:
         return self.__active_channel
 
     @active_channel.setter
-    def active_channel(self, value):
+    def active_channel(self, value: int) -> None:
         self.__active_channel = value
 
         self.__update_values()
@@ -40,150 +40,150 @@ class ParametersState:
         return self.__v_pga
 
     @v_pga.setter
-    def v_pga(self, value: int):
+    def v_pga(self, value: int) -> None:
         self.__v_pga = value
 
         self.__update_values()
 
     @property
-    def v_min(self):
+    def v_min(self) -> int | None:
         return self.__v_min
 
     @v_min.setter
-    def v_min(self, value):
+    def v_min(self, value: int) -> None:
         self.__v_min = value
 
     @property
-    def v_max(self):
+    def v_max(self) -> int | None:
         return self.__v_max
 
     @v_max.setter
-    def v_max(self, value):
+    def v_max(self, value: int) -> None:
         self.__v_max = value
 
     @property
-    def v_slope(self):
+    def v_slope(self) -> int | None:
         return self.__v_slope
 
     @v_slope.setter
-    def v_slope(self, value):
+    def v_slope(self, value: int) -> None:
         self.__v_slope = value
 
     @property
-    def v_inter(self):
+    def v_inter(self) -> int | None:
         return self.__v_inter
 
     @v_inter.setter
-    def v_inter(self, value):
+    def v_inter(self, value: int) -> None:
         self.__v_inter = value
 
     @property
-    def c_pga(self):
+    def c_pga(self) -> int:
         return self.__c_pga
 
     @c_pga.setter
-    def c_pga(self, value):
+    def c_pga(self, value: int) -> None:
         self.__c_pga = value
 
         self.__update_values()
 
     @property
-    def c_min(self):
+    def c_min(self) -> int | None:
         return self.__c_min
 
     @c_min.setter
-    def c_min(self, value):
+    def c_min(self, value: int):
         self.__c_min = value
 
     @property
-    def c_max(self):
+    def c_max(self) -> int | None:
         return self.__c_max
 
     @c_max.setter
-    def c_max(self, value):
+    def c_max(self, value: int) -> None:
         self.__c_max = value
 
     @property
-    def c_slope(self):
+    def c_slope(self) -> int | None:
         return self.__c_slope
 
     @c_slope.setter
-    def c_slope(self, value):
+    def c_slope(self, value: int) -> None:
         self.__c_slope = value
 
     @property
-    def c_inter(self):
+    def c_inter(self) -> int | None:
         return self.__c_inter
 
     @c_inter.setter
-    def c_inter(self, value):
+    def c_inter(self, value: int) -> None:
         self.__c_inter = value
 
     @property
-    def q_limits(self):
+    def q_limits(self) -> list:
         return self.__q_limits
 
     @q_limits.setter
-    def q_limits(self, value):
+    def q_limits(self, value: list) -> None:
         self.__q_limits = value
 
     @property
-    def q_c_slope(self):
+    def q_c_slope(self) -> list:
         return self.__q_c_slope
 
     @q_c_slope.setter
-    def q_c_slope(self, value):
+    def q_c_slope(self, value) -> None:
         self.__q_c_slope = value
 
     @property
-    def q_c_inter(self):
+    def q_c_inter(self) -> list:
         return self.__q_c_inter
 
     @q_c_inter.setter
-    def q_c_inter(self, value):
+    def q_c_inter(self, value) -> None:
         self.__q_c_inter = value
 
     @property
-    def q_v_inter(self):
+    def q_v_inter(self) -> list:
         return self.__q_v_inter
 
     @q_v_inter.setter
-    def q_v_inter(self, value):
+    def q_v_inter(self, value: list) -> None:
         self.__q_v_inter = value
 
     @property
-    def mode(self):
+    def mode(self) -> str | None:
         return self.__mode
 
     @mode.setter
-    def mode(self, value):
+    def mode(self, value: str) -> None:
         self.__mode = value
 
     @property
-    def v_ref(self):
+    def v_ref(self) -> int | None:
         return self.__v_ref
 
     @v_ref.setter
-    def v_ref(self, value):
+    def v_ref(self, value: int) -> None:
         self.__v_ref = value
 
     @property
-    def v_step(self):
+    def v_step(self) -> int | None:
         return self.__v_step
 
     @v_step.setter
-    def v_step(self, value):
+    def v_step(self, value: int) -> None:
         self.__v_step = value
 
     @property
-    def c_step(self):
+    def c_step(self) -> int | None:
         return self.__c_step
 
     @c_step.setter
-    def c_step(self, value):
+    def c_step(self, value: int) -> None:
         self.__c_step = value
 
-    def __update_values(self) -> None:
+    def regenerate_soft_values(self) -> None:
         from utils.HelperFunctions import Helper
 
         self.v_min = Helper.get_v_min()
