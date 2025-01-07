@@ -1,5 +1,6 @@
 from ParametersState import ParametersState
 
+
 class ParameterStateSingleton:
     __instance: ParametersState|None = None
 

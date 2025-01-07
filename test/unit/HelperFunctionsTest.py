@@ -1,40 +1,37 @@
 import unittest
-from io import TextIOWrapper
 from unittest.mock import Mock, patch
 
 from utils.HelperFunctions import Helper
 from mock.MockSerial import MockSerial
 
 from SerialHandler import SerialHandler
-from test import voltage_and_current, init
 
 
 class TestHelperFunctions(unittest.TestCase):
     __mock_serial: MockSerial = MockSerial()
     __mock_serial_handler: Mock = Mock(spec=SerialHandler)
-    __mock_file: Mock = Mock(spec=TextIOWrapper)
 
     def setUp(self) -> None:
         patch('SerialHandler.SerialHandler.get_instance', return_value=self.__mock_serial).start()
         self.__mock_serial_handler.get_instance.return_value = TestHelperFunctions.__mock_serial
-        init()
+        Helper.init_driver()
 
     def tearDown(self) -> None:
         patch.stopall()
 
-    def test_merge_command_result_with_signed_true(self) -> None:
+    def test_merge_bytes_as_decimal_command_result_with_signed_true(self) -> None:
         self.assertEqual(
             Helper.merge_bytes_as_decimal_command_result([102, 1, 2, 191, 235, 254, 226, 0, 52, 52]),
             -1075052830
         )
 
-    def test_merge_merge_with_fractional_bits_with_signed_true_self(self) -> None:
+    def test_merge_bytes_as_decimal_with_fractional_bits_with_signed_true_self(self) -> None:
         self.assertEqual(
             Helper.merge_bytes_as_decimal_with_fractional_bits(125, 240, 194, 48, fractional_bits=30),
             1.9678197354078293
         )
 
-    def test_merge_with_signed_true(self) -> None:
+    def test_merge_bytes_as_decimal_with_signed_true(self) -> None:
         self.assertEqual(
             Helper.merge_bytes_as_decimal(0, 142),
             142
@@ -56,21 +53,21 @@ class TestHelperFunctions(unittest.TestCase):
             -0.14
         )
 
-    def test_voltage_and_current(self):
+    def test_get_voltage_and_current(self):
         self.assertEqual(
-            voltage_and_current(self.__mock_file),
-            {'v': 0.014633910147473218, 'c': -2.7662073475122453}
+            Helper.get_voltage_and_current(),
+            {'voltage': 0.014633910147473218, 'current': -2.7662073475122453}
         )
 
     def test_get_ranges_for_voltage(self) -> None:
         self.assertEqual(
-            Helper.get_ranges(self.__mock_file, True),
+            Helper.get_ranges(True),
             {'v_min': -4.004883877933025, 'v_max': 3.9668768607079983}
         )
 
     def test_get_ranges_for_current(self) -> None:
         self.assertEqual(
-            Helper.get_ranges(self.__mock_file, False),
+            Helper.get_ranges(False),
             {'c_min': -1.0, 'c_max': 40.38594967126846}
         )
 
@@ -79,6 +76,7 @@ class TestHelperFunctions(unittest.TestCase):
             Helper.calculate_range(-1073741824, 30),
             -1.0
         )
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

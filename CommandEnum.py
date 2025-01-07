@@ -12,31 +12,31 @@ class CommandEnum(Enum):
     # =====================
     # Calibration Commands
     # =====================
-    GET_VMIN = 0x34
-    GET_VMAX = 0x35
+    GET_V_MIN = 0x34
+    GET_V_MAX = 0x35
 
-    GET_CMIN = 0x36
-    GET_CMAX = 0x37
+    GET_C_MIN = 0x36
+    GET_C_MAX = 0x37
 
-    GET_QLIMITS = 0x3E
+    GET_Q_LIMITS = 0x3E
 
-    GET_VPGA = 0x3C
-    GET_CPGA = 0x3D
+    GET_V_PGA = 0x3C
+    GET_C_PGA = 0x3D
 
-    SET_VPGA = 0x43
-    SET_CPGA = 0x45
+    SET_V_PGA = 0x43
+    SET_C_PGA = 0x45
 
-    GET_VSLOPE = 0x38
-    GET_VINTER = 0x39
+    GET_V_SLOPE = 0x38
+    GET_V_INTER = 0x39
 
-    GET_CSLOPE = 0x3A
-    GET_CINTER = 0x3B
+    GET_C_SLOPE = 0x3A
+    GET_C_INTER = 0x3B
 
-    GET_QVSLOPE = 0x3F
-    GET_QCSLOPE = 0x40
+    GET_Q_V_SLOPE = 0x3F
+    GET_Q_C_SLOPE = 0x40
 
-    GET_QVINTER = 0x41
-    GET_QCINTER = 0x42
+    GET_Q_V_INTER = 0x41
+    GET_Q_C_INTER = 0x42
 
     # =====================
     # Working Commands

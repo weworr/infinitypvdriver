@@ -186,16 +186,16 @@ class ParametersState:
     def __update_values(self) -> None:
         from utils.HelperFunctions import Helper
 
-        self.v_min = Helper.get_vmin()
-        self.v_max = Helper.get_vmax()
+        self.v_min = Helper.get_v_min()
+        self.v_max = Helper.get_v_max()
 
         if self.v_pga is not None:
-            self.v_slope = Helper.get_vslope(self.v_pga)
-            self.v_inter = Helper.get_vinter(self.v_pga)
+            self.v_slope = Helper.get_v_slope()
+            self.v_inter = Helper.get_v_inter()
 
-        self.c_min = Helper.get_cmin()
-        self.c_max = Helper.get_cmax()
+        self.c_min = Helper.get_c_min()
+        self.c_max = Helper.get_c_max()
 
         if self.c_pga is not None:
-            self.c_slope = Helper.get_cslope(self.c_pga)
-            self.c_inter = Helper.get_cinter(self.c_pga)
+            self.c_slope = Helper.get_c_slope()
+            self.c_inter = Helper.get_c_inter()
