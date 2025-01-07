@@ -22,10 +22,11 @@ class DriverService:
 
     @staticmethod
     def init_driver():
-        p = ParameterStateSingleton.get_instance()
+        ParameterStateSingleton.set_active_channel(1)
 
-        p.regenerate_soft_values()
-        p.q_limits = DriverService.send_command(CommandEnum.GET_Q_LIMITS)
+        for instance in ParameterStateSingleton.get_all_instances():
+            instance.regenerate_soft_values()
+            instance.q_limits = DriverService.send_command(CommandEnum.GET_Q_LIMITS)
 
     @staticmethod
     def calculate_range(value_q: int, q: int):
@@ -66,7 +67,7 @@ class DriverService:
         # TODO Powinniśmy trzymać konfiurację per channel. Jakby mieli się przełączać to chyba nie zmieni się konfiguracja co?
         # Trzeba to będzie też testnąć. ;)
 
-        ParameterStateSingleton.get_instance().active_channel = channel
+        ParameterStateSingleton.set_active_channel(channel)
 
     @staticmethod
     def get_v_min() -> int:

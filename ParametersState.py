@@ -14,11 +14,11 @@ class ParametersState:
         self.__c_slope: int | None = None
         self.__c_inter: int | None = None
 
-        self.__q_limits: list[int] = []
-        self.__q_c_slope: list[int] = []
-        self.__q_c_inter: list[int] = []
-        self.__q_v_slope: list[int] = []
-        self.__q_v_inter: list[int] = []
+        self.__q_limits: list = []
+        self.__q_c_slope: list = []
+        self.__q_c_inter: list = []
+        self.__q_v_slope: list = []
+        self.__q_v_inter: list = []
 
         self.__mode: str | None = None
         self.__v_ref: int | None = None
@@ -26,7 +26,7 @@ class ParametersState:
         self.__c_step: int | None = None
 
     @property
-    def channel(self) -> int:
+    def channel(self) -> int | None:
         return self.__channel
 
     @channel.setter

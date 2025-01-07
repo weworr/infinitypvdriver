@@ -2,12 +2,12 @@ import unittest
 from unittest.mock import patch
 
 from ParameterStateSingleton import ParameterStateSingleton
-from utils.HelperFunctions import Helper
+from service.DriverService import DriverService
 
 
 class ParameterStateSingletonTest(unittest.TestCase):
     def setUp(self) -> None:
-        Helper.init_driver()
+        DriverService.init_driver()
 
     def tearDown(self) -> None:
         patch.stopall()
