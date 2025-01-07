@@ -8,13 +8,13 @@ from mock.MockSerial import MockSerial
 from SerialHandler import SerialHandler
 
 
-class TestHelperFunctions(unittest.TestCase):
+class NumeralSystemUtilsTest(unittest.TestCase):
     __mock_serial: MockSerial = MockSerial()
     __mock_serial_handler: Mock = Mock(spec=SerialHandler)
 
     def setUp(self) -> None:
         patch('SerialHandler.SerialHandler.get_instance', return_value=self.__mock_serial).start()
-        self.__mock_serial_handler.get_instance.return_value = TestHelperFunctions.__mock_serial
+        self.__mock_serial_handler.get_instance.return_value = NumeralSystemUtilsTest.__mock_serial
         DriverService.init_driver()
 
     def tearDown(self) -> None:
