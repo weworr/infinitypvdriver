@@ -1,62 +1,23 @@
-from io import TextIOWrapper
-from math import log2
-
 from CommandEnum import CommandEnum
 from utils.HelperFunctions import Helper
 from ParameterStateSingleton import ParameterStateSingleton
 from SerialHandler import SerialHandler
 
 
-def voltage_and_current(file: TextIOWrapper) -> dict:
-    # --- voltage ---
-    voltage_and_current = Helper.send_command(CommandEnum.GET_VOLTAGE_AND_CURRENT)
-    voltage = Helper.merge_bytes_as_decimal(*voltage_and_current[3:5])
-
-    # vpga = Helper.send_command(file, 0x3C)[4]
-    p = ParameterStateSingleton().get_instance()
-    vpga = p.v_pga
-    voltage_fractional_bits_index = int(3 + log2(vpga))
-
-    adc_volts = Helper.calculate_adc_from_raw_value(voltage, vpga)
-
-    # v_slope = Helper.merge_with_fractional_bits(
-    #     *Helper.send_command(file, 0x38)[3:7],
-    #     fractional_bits=Helper.send_command(file, 0x3F)[voltage_fractional_bits_index],
-    #     signed=True
-    # )
-    # v_inter = Helper.merge_with_fractional_bits(
-    #     *Helper.send_command(file, 0x39)[3:7],
-    #     fractional_bits=Helper.send_command(file, 0x41)[voltage_fractional_bits_index],
-    #     signed=True
-    # )
-
-    current = Helper.merge_bytes_as_decimal(*voltage_and_current[5:7])
-
-    # cpga = Helper.send_command(file, 0x3D)[4]
-    cpga = p.c_pga
-    current_fractional_bits_index = int(3 + log2(cpga))
-
-    adc_current = Helper.calculate_adc_from_raw_value(current, cpga)
-
-    # c_slope = Helper.merge_with_fractional_bits(
-    #     *Helper.send_command(file, 0x3A)[3:7],
-    #     fractional_bits=Helper.send_command(file, 0x40)[current_fractional_bits_index],
-    #     signed=True
-    # )
-    # c_inter = Helper.merge_with_fractional_bits(
-    #     *Helper.send_command(file, 0x3B)[3:7],
-    #     fractional_bits=Helper.send_command(file, 0x42)[current_fractional_bits_index],
-    #     signed=True
-    # )
-
-    return {
-        'v': (adc_volts * p.v_slope) + p.v_inter,
-        'c': (adc_current * p.c_slope) + p.c_inter,
-    }
+def init() -> None:
+    """
+    Funkcja sterownika.
+    Inicjalizuje urządzenie i pamięć sterownika z domyślnymi danymi:
+        - c_pga = 1
+        - v_pga = 1
+        - q_limits = {pobrane z urządzenia}
+    """
+    Helper.init_driver()
 
 
 def set_serial_port(port: str) -> None:
     """
+    Funkcja sterownika.
     Ustawia port, z którym będzie komunikował się sterownik.
 
     W przypadku, gdy połączenie do dowolnego portu jest już nawiązane funkcja wyrzuci błąd.
@@ -86,10 +47,7 @@ def active_unit(channel: int) -> None:
     Ustawia komunikację z jedynm z ośmiu kanałów.
     :param channel: Kanał na którego przestawiamy komunikację. Należy podać liczbę całkowitą z przedziału od 0 do 7.
     """
-    if 0 > channel or channel > 7:
-        raise Exception("Channel must be between 0 and 7.")
-
-    Helper.send_command(CommandEnum.ACTIVE_UNIT, data_lsb=channel)
+    Helper.active_unit(channel)
 
 
 def get_unit_idn() -> int:
@@ -104,20 +62,106 @@ def get_unit_idn() -> int:
 # ===========================
 # region Calibration Commands
 # ===========================
-def get_vmin() -> int:
-    return Helper.get_vmin()
+def get_v_min() -> int:
+    return Helper.get_v_min()
 
 
-def get_vmax() -> int:
-    return Helper.get_vmax()
+def get_v_max() -> int:
+    return Helper.get_v_max()
 
 
-def get_cmin() -> int:
-    return Helper.get_vmax()
+def get_c_min() -> int:
+    return Helper.get_v_max()
 
 
-def get_cmax() -> int:
-    return Helper.get_cmax()
+def get_c_max() -> int:
+    return Helper.get_c_max()
+
+
+def get_q_limits() -> dict:
+    return {}  # TODO
+
+
+def get_v_pga() -> int:
+    return 0  # TODO
+
+
+def get_c_pga() -> int:
+    return 0  # TODO
+
+
+def set_v_pga(pga: int) -> None:
+    """
+    :param pga: Programmable Gain Amplifier. Akceptowalna jest jedynie jedna z liczb: 1, 2, 4, 8.
+    """
+    Helper.set_v_pga(pga)
+
+
+def set_c_pga(pga: int) -> None:
+    """
+    :param pga: Programmable Gain Amplifier. Akceptowalna jest jedynie jedna z liczb: 1, 2, 4, 8.
+    """
+    Helper.set_c_pga(pga)
+
+
+def get_v_slope() -> float:
+    return Helper.get_v_slope()
+
+
+def get_v_inter() -> float:
+    return Helper.get_v_inter()
+
+
+def get_c_slope() -> float:
+    return Helper.get_c_slope()
+
+
+def get_c_inter() -> float:
+    return Helper.get_c_inter()
+
+
+def get_q_v_slope() -> list:
+    return []  # TODO
+
+
+def get_current_q_v_slope() -> int:
+    """
+    Funkcja sterownika.
+    """
+    return 0  # TODO
+
+
+def get_q_c_slope() -> list:
+    return []  # TODO
+
+
+def get_current_q_c_slope() -> int:
+    """
+    Funkcja sterownika.
+    """
+    # TODO W tych miejscach gdzie możemy wyciągać cache'owane rzeczy trzeba ifowac, czy są setnięte
+    # Jak nie to trzeba pobrać je z maszyny. Lub na inicie pobrać wszystko na start i mieć to pompie.
+    # * można sprawdzić na PG jakie są domyślne wartości i je przypisać na stałe w kodzie i wtedy
+    # init będzie tylko po to, żeby zresetować wartości w sterowniku np.
+    # Trzeba to przemyśleć jeszcze i guess.
+    p = ParameterStateSingleton.get_instance()
+    return p.q_c_slope[Helper.calculate_byte_to_read_index(p.c_pga)]
+
+
+def get_q_v_inter() -> list:
+    return []  # TODO
+
+
+def get_current_q_v_inter() -> int:
+    return 0  # TODO
+
+
+def get_q_c_inter() -> list:
+    return []  # TODO
+
+
+def get_current_q_c_inter() -> int:
+    return 0  # TODO
 
 # endregion Calibration Commands
 
@@ -126,18 +170,29 @@ def get_cmax() -> int:
 # region Working Commands
 # ===========================
 
-def set_mode():
+def set_mode() -> None:
     return None
 
+
+def get_mode() -> str:
+    return ''
+
+
+def set_vref() -> None:
+    return None
+
+
+def get_voltage_and_current() -> dict:
+    """
+    :return: Słownik w postaci:
+        {
+            "voltage": <float>,
+            "current": <float>
+        }
+    """
+    return Helper.get_voltage_and_current()
+
 # endregion Working Commands
-
-
-def init() -> None:
-    state = ParameterStateSingleton.get_instance()
-
-    state.c_pga = 1
-    state.v_pga = 1
-    state.q_limits = Helper.send_command(CommandEnum.GET_QLIMITS)
 
 
 def main():
@@ -248,9 +303,9 @@ def main():
                 case 'vc':
                     response = voltage_and_current(file)
                 case 'v_ranges':
-                    response = Helper.get_ranges(file)
+                    response = Helper.get_ranges()
                 case 'c_ranges':
-                    response = Helper.get_ranges(file, False)
+                    response = Helper.get_ranges(False)
                 case 'v_min':
                     response = Helper.merge_bytes_as_decimal_command_result(Helper.send_command(file, 0x34))
                     # response = Helper.merge_command_result(ParameterStateSingleton.get_instance().v_min, signed=True)
