@@ -1,5 +1,6 @@
 from CommandEnum import CommandEnum
-from utils.HelperFunctions import Helper
+from service.DriverService import DriverService
+from utils.NumeralSystemUtils import NumeralSystemUtils
 from ParameterStateSingleton import ParameterStateSingleton
 from SerialHandler import SerialHandler
 
@@ -12,7 +13,7 @@ def init() -> None:
         - v_pga = 1
         - q_limits = {pobrane z urządzenia}
     """
-    Helper.init_driver()
+    DriverService.init_driver()
 
 
 def set_serial_port(port: str) -> None:
@@ -36,8 +37,8 @@ def get_internal_idn() -> int:
     """
     :return: Numer identyfikacyjny urządzenia
     """
-    return Helper.merge_bytes_as_decimal(
-        *Helper.send_command(CommandEnum.GET_INTERNAL_IDN)[3:7],
+    return NumeralSystemUtils.merge_bytes_as_decimal(
+        *DriverService.send_command(CommandEnum.GET_INTERNAL_IDN)[3:7],
         signed=False
     )
 
@@ -47,14 +48,14 @@ def active_unit(channel: int) -> None:
     Ustawia komunikację z jedynm z ośmiu kanałów.
     :param channel: Kanał na którego przestawiamy komunikację. Należy podać liczbę całkowitą z przedziału od 0 do 7.
     """
-    Helper.active_unit(channel)
+    DriverService.active_unit(channel)
 
 
 def get_unit_idn() -> int:
     """
     :return: Numer identyfikacyjny kanału.
     """
-    return Helper.merge_bytes_as_decimal(*Helper.send_command(CommandEnum.GET_UNIT_IDN)[3:7])
+    return NumeralSystemUtils.merge_bytes_as_decimal(*DriverService.send_command(CommandEnum.GET_UNIT_IDN)[3:7])
 
 # endregion General Commands
 
@@ -63,19 +64,19 @@ def get_unit_idn() -> int:
 # region Calibration Commands
 # ===========================
 def get_v_min() -> int:
-    return Helper.get_v_min()
+    return DriverService.get_v_min()
 
 
 def get_v_max() -> int:
-    return Helper.get_v_max()
+    return DriverService.get_v_max()
 
 
 def get_c_min() -> int:
-    return Helper.get_v_max()
+    return DriverService.get_v_max()
 
 
 def get_c_max() -> int:
-    return Helper.get_c_max()
+    return DriverService.get_c_max()
 
 
 def get_q_limits() -> dict:
@@ -94,30 +95,30 @@ def set_v_pga(pga: int) -> None:
     """
     :param pga: Programmable Gain Amplifier. Akceptowalna jest jedynie jedna z liczb: 1, 2, 4, 8.
     """
-    Helper.set_v_pga(pga)
+    DriverService.set_v_pga(pga)
 
 
 def set_c_pga(pga: int) -> None:
     """
     :param pga: Programmable Gain Amplifier. Akceptowalna jest jedynie jedna z liczb: 1, 2, 4, 8.
     """
-    Helper.set_c_pga(pga)
+    DriverService.set_c_pga(pga)
 
 
 def get_v_slope() -> float:
-    return Helper.get_v_slope()
+    return DriverService.get_v_slope()
 
 
 def get_v_inter() -> float:
-    return Helper.get_v_inter()
+    return DriverService.get_v_inter()
 
 
 def get_c_slope() -> float:
-    return Helper.get_c_slope()
+    return DriverService.get_c_slope()
 
 
 def get_c_inter() -> float:
-    return Helper.get_c_inter()
+    return DriverService.get_c_inter()
 
 
 def get_q_v_slope() -> list:
@@ -145,7 +146,7 @@ def get_current_q_c_slope() -> int:
     # init będzie tylko po to, żeby zresetować wartości w sterowniku np.
     # Trzeba to przemyśleć jeszcze i guess.
     p = ParameterStateSingleton.get_instance()
-    return p.q_c_slope[Helper.calculate_byte_to_read_index(p.c_pga)]
+    return p.q_c_slope[NumeralSystemUtils.calculate_byte_to_read_index(p.c_pga)]
 
 
 def get_q_v_inter() -> list:
@@ -190,7 +191,7 @@ def get_voltage_and_current() -> dict:
             "current": <float>
         }
     """
-    return Helper.get_voltage_and_current()
+    return DriverService.get_voltage_and_current()
 
 # endregion Working Commands
 
@@ -296,21 +297,21 @@ def main():
                     skip = True
 
             if not skip:
-                response = Helper.send_command(command, data_msb, data_lsb)
+                response = NumeralSystemUtils.send_command(command, data_msb, data_lsb)
                 continue
 
             match keyboard_input:
                 case 'vc':
                     response = voltage_and_current(file)
                 case 'v_ranges':
-                    response = Helper.get_ranges()
+                    response = NumeralSystemUtils.get_ranges()
                 case 'c_ranges':
-                    response = Helper.get_ranges(False)
+                    response = NumeralSystemUtils.get_ranges(False)
                 case 'v_min':
-                    response = Helper.merge_bytes_as_decimal_command_result(Helper.send_command(file, 0x34))
+                    response = NumeralSystemUtils.merge_bytes_as_decimal_command_result(NumeralSystemUtils.send_command(file, 0x34))
                     # response = Helper.merge_command_result(ParameterStateSingleton.get_instance().v_min, signed=True)
                 case 'v_max':
-                    response = Helper.merge_bytes_as_decimal_command_result(ParameterStateSingleton.get_instance().v_max)
+                    response = NumeralSystemUtils.merge_bytes_as_decimal_command_result(ParameterStateSingleton.get_instance().v_max)
                     # response = Helper.merge_command_result(Helper.send_command(file, 0x35), signed=True)
                 case 'q':
                     return
