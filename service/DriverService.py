@@ -76,8 +76,14 @@ class DriverService:
 
     @staticmethod
     def get_v_max() -> int:
-        return NumeralSystemUtils.merge_bytes_as_decimal_command_result(
-            DriverService.send_command(CommandEnum.GET_V_MAX))
+        p = ParameterStateSingleton.get_instance()
+
+        if p.v_max is None:
+            p.v_max = NumeralSystemUtils.merge_bytes_as_decimal_command_result(
+                DriverService.send_command(CommandEnum.GET_V_MAX)
+            )
+
+        return p.v_max
 
     @staticmethod
     def get_v_slope() -> float:

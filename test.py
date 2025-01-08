@@ -198,6 +198,9 @@ def get_voltage_and_current() -> dict:
 
 def main():
     init()
+    print('===============================')
+    get_v_max()
+    get_v_max()
     exit()
 
     SerialHandler.get_instance('/dev/pts/2')

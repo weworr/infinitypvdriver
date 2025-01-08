@@ -2,23 +2,23 @@ class ParametersState:
     def __init__(self, channel: int):
         self.__channel: int = channel
 
-        self.__v_pga: int = 1
+        self.__v_pga: int = 1  # Do weryfikacji
         self.__v_min: int | None = None
         self.__v_max: int | None = None
         self.__v_slope: int | None = None
         self.__v_inter: int | None = None
 
-        self.__c_pga: int = 1
+        self.__c_pga: int = 1  # Do weryfikacji
         self.__c_min: int | None = None
         self.__c_max: int | None = None
         self.__c_slope: int | None = None
         self.__c_inter: int | None = None
 
         self.__q_limits: list = []
-        self.__q_c_slope: list = []
-        self.__q_c_inter: list = []
-        self.__q_v_slope: list = []
-        self.__q_v_inter: list = []
+        self.__q_c_slope: list = []  # Do weryfikacji, czy wartość jest stała niezależnie od vref i gain
+        self.__q_c_inter: list = []  # Do weryfikacji, czy wartość jest stała niezależnie od vref i gain
+        self.__q_v_slope: list = []  # Do weryfikacji, czy wartość jest stała niezależnie od vref i gain
+        self.__q_v_inter: list = []  # Do weryfikacji, czy wartość jest stała niezależnie od vref i gain
 
         self.__mode: str | None = None
         self.__v_ref: int | None = None
