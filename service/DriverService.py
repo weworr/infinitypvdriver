@@ -1,6 +1,7 @@
-from CommandEnum import CommandEnum
+from enums.CommandEnum import CommandEnum
 from ParameterStateSingleton import ParameterStateSingleton
 from SerialHandler import SerialHandler
+from enums.ModeEnum import ModeEnum
 from utils.NumeralSystemUtils import NumeralSystemUtils
 
 
@@ -70,7 +71,7 @@ class DriverService:
         DriverService.send_command(CommandEnum.ACTIVE_UNIT, data_lsb=channel)
 
         # TODO Powinniśmy trzymać konfiurację per channel. Jakby mieli się przełączać to chyba nie zmieni się konfiguracja co?
-        # Trzeba to będzie też testnąć. ;)
+        #   Trzeba to będzie też testnąć. ;)
 
         ParameterStateSingleton.set_active_channel(channel)
 
@@ -308,8 +309,19 @@ class DriverService:
         return DriverService.get_q_c_inter()[NumeralSystemUtils.calculate_byte_to_read_index(DriverService.get_c_pga())]
 
     @staticmethod
-    def set_mode() -> None:
-        return None  # TODO
+    def set_mode(mode: str) -> None:
+        p = ParameterStateSingleton.get_instance()
+
+        match mode:
+            case ModeEnum.VFIX.name:
+                mode_enum = ModeEnum.VFIX
+            case ModeEnum.MPPT.name:
+                mode_enum = ModeEnum.MPPT
+            case _:
+                raise Exception("Unsupported working mode. Available working modes are 'VFIX' and 'MPPT'.")
+
+        DriverService.send_command(CommandEnum.SET_MODE, mode_enum.value)
+        p.mode = mode_enum.name
 
     @staticmethod
     def get_mode() -> str:

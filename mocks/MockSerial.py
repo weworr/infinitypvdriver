@@ -1,4 +1,4 @@
-from CommandEnum import CommandEnum
+from enums.CommandEnum import CommandEnum
 
 
 class MockSerial:
