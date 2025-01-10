@@ -45,4 +45,4 @@ class NumeralSystemUtils:
         """
         Służy do obliczenia indeksu bajtu, który trzeba odczytać z funkcji [0x3F - 0x42]
         """
-        return int(3 + log2(pga_configuration))
+        return int(log2(pga_configuration))

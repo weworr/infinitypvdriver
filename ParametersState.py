@@ -14,7 +14,11 @@ class ParametersState:
         self.__c_slope: int | None = None
         self.__c_inter: int | None = None
 
-        self.__q_limits: list = []
+        self.__q_limits_v_min: int | None = None
+        self.__q_limits_v_max: int | None = None
+        self.__q_limits_c_min: int | None = None
+        self.__q_limits_c_max: int | None = None
+
         self.__q_c_slope: list = []  # Do weryfikacji, czy wartość jest stała niezależnie od vref i gain
         self.__q_c_inter: list = []  # Do weryfikacji, czy wartość jest stała niezależnie od vref i gain
         self.__q_v_slope: list = []  # Do weryfikacji, czy wartość jest stała niezależnie od vref i gain
@@ -118,12 +122,36 @@ class ParametersState:
         self.__c_inter = value
 
     @property
-    def q_limits(self) -> list:
-        return self.__q_limits
+    def q_limits_v_min(self) -> int:
+        return self.__q_limits_v_min
 
-    @q_limits.setter
-    def q_limits(self, value: list) -> None:
-        self.__q_limits = value
+    @q_limits_v_min.setter
+    def q_limits_v_min(self, value: int) -> None:
+        self.__q_limits_v_min = value
+
+    @property
+    def q_limits_v_max(self) -> int:
+        return self.__q_limits_v_max
+
+    @q_limits_v_max.setter
+    def q_limits_v_max(self, value: int) -> None:
+        self.__q_limits_v_max = value
+
+    @property
+    def q_limits_c_min(self) -> int:
+        return self.__q_limits_c_min
+
+    @q_limits_c_min.setter
+    def q_limits_c_min(self, value: int) -> None:
+        self.__q_limits_c_min = value
+
+    @property
+    def q_limits_c_max(self) -> int:
+        return self.__q_limits_c_max
+
+    @q_limits_c_max.setter
+    def q_limits_c_max(self, value: int) -> None:
+        self.__q_limits_c_max = value
 
     @property
     def q_c_slope(self) -> list:
@@ -140,6 +168,14 @@ class ParametersState:
     @q_c_inter.setter
     def q_c_inter(self, value) -> None:
         self.__q_c_inter = value
+
+    @property
+    def q_v_slope(self) -> list:
+        return self.__q_v_slope
+
+    @q_v_slope.setter
+    def q_v_slope(self, value: list) -> None:
+        self.__q_v_slope = value
 
     @property
     def q_v_inter(self) -> list:

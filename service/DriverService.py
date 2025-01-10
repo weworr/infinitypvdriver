@@ -21,14 +21,6 @@ class DriverService:
         return [byte for byte in bytearray(handler.readline())]
 
     @staticmethod
-    def init_driver():
-        ParameterStateSingleton.set_active_channel(1)
-
-        for instance in ParameterStateSingleton.get_all_instances():
-            instance.regenerate_soft_values()
-            instance.q_limits = DriverService.send_command(CommandEnum.GET_Q_LIMITS)
-
-    @staticmethod
     def calculate_range(value_q: int, q: int):
         if value_q <= (2 ** 31) - 1:
             return value_q * 2 ** (-q)
@@ -58,6 +50,19 @@ class DriverService:
         return (-1 * (2 ** 16 - raw_adc)) * (1 / gain) * (62.5 * 10 ** (-6))
 
     @staticmethod
+    def init_driver():
+        ParameterStateSingleton.set_active_channel(1)
+
+        for instance in ParameterStateSingleton.get_all_instances():
+            instance.regenerate_soft_values()
+
+            q_limits = DriverService.send_command(CommandEnum.GET_Q_LIMITS)[3:7]
+            instance.q_limits_v_min = q_limits[0]
+            instance.q_limits_v_max = q_limits[1]
+            instance.q_limits_c_min = q_limits[2]
+            instance.q_limits_c_max = q_limits[3]
+
+    @staticmethod
     def active_unit(channel: int) -> None:
         if 0 > channel or channel > 7:
             raise Exception("Channel must be between 0 and 7.")
@@ -71,8 +76,14 @@ class DriverService:
 
     @staticmethod
     def get_v_min() -> int:
-        return NumeralSystemUtils.merge_bytes_as_decimal_command_result(
-            DriverService.send_command(CommandEnum.GET_V_MIN))
+        p = ParameterStateSingleton.get_instance()
+
+        if p.v_min is None:
+            NumeralSystemUtils.merge_bytes_as_decimal_command_result(
+                DriverService.send_command(CommandEnum.GET_V_MIN)
+            )
+
+        return p.v_min
 
     @staticmethod
     def get_v_max() -> int:
@@ -86,54 +97,99 @@ class DriverService:
         return p.v_max
 
     @staticmethod
-    def get_v_slope() -> float:
-        p = ParameterStateSingleton.get_instance()
-
-        return NumeralSystemUtils.merge_bytes_as_decimal_with_fractional_bits(
-            *DriverService.send_command(CommandEnum.GET_V_SLOPE)[3:7],
-            fractional_bits=DriverService.send_command(CommandEnum.GET_Q_V_SLOPE)[
-                NumeralSystemUtils.calculate_byte_to_read_index(p.v_pga)]
-        )
-
-    @staticmethod
-    def get_v_inter() -> float:
-        p = ParameterStateSingleton.get_instance()
-
-        return NumeralSystemUtils.merge_bytes_as_decimal_with_fractional_bits(
-            *DriverService.send_command(CommandEnum.GET_V_INTER)[3:7],
-            fractional_bits=DriverService.send_command(CommandEnum.GET_Q_V_INTER)[
-                NumeralSystemUtils.calculate_byte_to_read_index(p.v_pga)]
-        )
-
-    @staticmethod
     def get_c_min() -> int:
-        return NumeralSystemUtils.merge_bytes_as_decimal_command_result(
-            DriverService.send_command(CommandEnum.GET_C_MIN))
+        p = ParameterStateSingleton.get_instance()
+
+        if p.c_min is None:
+            p.c_min = NumeralSystemUtils.merge_bytes_as_decimal_command_result(
+                DriverService.send_command(CommandEnum.GET_C_MIN)
+            )
+
+        return p.c_min
 
     @staticmethod
     def get_c_max() -> int:
-        return NumeralSystemUtils.merge_bytes_as_decimal_command_result(
-            DriverService.send_command(CommandEnum.GET_C_MAX))
-
-    @staticmethod
-    def get_c_slope() -> float:
         p = ParameterStateSingleton.get_instance()
 
-        return NumeralSystemUtils.merge_bytes_as_decimal_with_fractional_bits(
-            *DriverService.send_command(CommandEnum.GET_C_SLOPE)[3:7],
-            fractional_bits=DriverService.send_command(CommandEnum.GET_Q_C_SLOPE)[
-                NumeralSystemUtils.calculate_byte_to_read_index(p.c_pga)]
-        )
+        if p.c_max is None:
+            p.c_max = NumeralSystemUtils.merge_bytes_as_decimal_command_result(
+                DriverService.send_command(CommandEnum.GET_C_MAX)
+            )
+
+        return p.c_max
 
     @staticmethod
-    def get_c_inter() -> float:
+    def get_q_limits() -> dict:
         p = ParameterStateSingleton.get_instance()
 
-        return NumeralSystemUtils.merge_bytes_as_decimal_with_fractional_bits(
-            *DriverService.send_command(CommandEnum.GET_C_INTER)[3:7],
-            fractional_bits=DriverService.send_command(CommandEnum.GET_Q_C_INTER)[
-                NumeralSystemUtils.calculate_byte_to_read_index(p.c_pga)]
-        )
+        if (
+                p.q_limits_v_min is None
+                or p.q_limits_v_max is None
+                or p.q_limits_c_min is None
+                or p.q_limits_c_max is None
+        ):
+            DriverService.__set_q_limits()
+
+        return {
+            'v_min': p.q_limits_v_min,
+            'v_max': p.q_limits_v_max,
+            'c_min': p.q_limits_c_min,
+            'c_max': p.q_limits_c_max
+        }
+
+    @staticmethod
+    def get_q_limits_v_min() -> int:
+        p = ParameterStateSingleton.get_instance()
+
+        if p.q_limits_v_min is None:
+            DriverService.__set_q_limits()
+
+        return p.q_limits_v_min
+
+    @staticmethod
+    def get_q_limits_v_max() -> int:
+        p = ParameterStateSingleton.get_instance()
+
+        if p.q_limits_v_max is None:
+            DriverService.__set_q_limits()
+
+        return p.q_limits_v_max
+
+    @staticmethod
+    def get_q_limits_c_min() -> int:
+        p = ParameterStateSingleton.get_instance()
+
+        if p.q_limits_c_min is None:
+            DriverService.__set_q_limits()
+
+        return p.q_limits_c_min
+
+    @staticmethod
+    def get_q_limits_c_max() -> int:
+        p = ParameterStateSingleton.get_instance()
+
+        if p.q_limits_c_max is None:
+            DriverService.__set_q_limits()
+
+        return p.q_limits_c_max
+
+    @staticmethod
+    def __set_q_limits() -> None:
+        p = ParameterStateSingleton.get_instance()
+
+        q_limits = DriverService.send_command(CommandEnum.GET_Q_LIMITS)[3:7]
+        p.q_limits_v_min = q_limits[0]
+        p.q_limits_v_max = q_limits[1]
+        p.q_limits_c_min = q_limits[2]
+        p.q_limits_c_max = q_limits[3]
+
+    @staticmethod
+    def get_v_pga() -> int:
+        return 1  # TODO
+
+    @staticmethod
+    def get_c_pga() -> int:
+        return 1  # TODO
 
     @staticmethod
     def set_v_pga(pga: int) -> None:
@@ -152,15 +208,118 @@ class DriverService:
         ParameterStateSingleton.get_instance().c_pga = pga
 
     @staticmethod
+    def get_v_slope() -> float:
+        p = ParameterStateSingleton.get_instance()
+
+        if p.v_slope is None:
+            p.v_slope = NumeralSystemUtils.merge_bytes_as_decimal_with_fractional_bits(
+                *DriverService.send_command(CommandEnum.GET_V_SLOPE)[3:7],
+                fractional_bits=DriverService.get_current_q_v_slope()
+            )
+
+        return p.v_slope
+
+    @staticmethod
+    def get_v_inter() -> float:
+        p = ParameterStateSingleton.get_instance()
+
+        return NumeralSystemUtils.merge_bytes_as_decimal_with_fractional_bits(
+            *DriverService.send_command(CommandEnum.GET_V_INTER)[3:7],
+            fractional_bits=(DriverService.send_command(CommandEnum.GET_Q_V_INTER)[3:7])[  # TODO
+                NumeralSystemUtils.calculate_byte_to_read_index(DriverService.get_v_pga())]
+        )
+
+    @staticmethod
+    def get_c_slope() -> float:
+        p = ParameterStateSingleton.get_instance()
+
+        if p.c_slope is None:
+            p.c_slope = NumeralSystemUtils.merge_bytes_as_decimal_with_fractional_bits(
+                *DriverService.send_command(CommandEnum.GET_C_SLOPE)[3:7],
+                fractional_bits=DriverService.get_current_q_c_slope()
+            )
+
+        return p.c_slope
+
+    @staticmethod
+    def get_c_inter() -> float:
+        p = ParameterStateSingleton.get_instance()
+
+        return NumeralSystemUtils.merge_bytes_as_decimal_with_fractional_bits(
+            *DriverService.send_command(CommandEnum.GET_C_INTER)[3:7],
+            fractional_bits=(DriverService.send_command(CommandEnum.GET_Q_C_INTER)[3:7])[  # TODO
+                NumeralSystemUtils.calculate_byte_to_read_index(DriverService.get_c_pga())]
+        )
+
+    @staticmethod
+    def get_q_v_slope() -> list:
+        p = ParameterStateSingleton.get_instance()
+
+        if not p.q_v_slope:
+            p.q_v_slope = DriverService.send_command(CommandEnum.GET_Q_V_SLOPE)[3:7]
+
+        return p.q_v_slope
+
+    @staticmethod
+    def get_current_q_v_slope() -> int:
+        return DriverService.get_q_v_slope()[NumeralSystemUtils.calculate_byte_to_read_index(DriverService.get_v_pga())]
+
+    @staticmethod
+    def get_q_c_slope() -> list:
+        p = ParameterStateSingleton.get_instance()
+
+        if not p.q_c_slope:
+            p.q_c_slope = DriverService.send_command(CommandEnum.GET_Q_C_SLOPE)[3:7]
+
+        return p.q_c_slope
+
+    @staticmethod
+    def get_current_q_c_slope() -> int:
+        return DriverService.get_q_c_slope()[NumeralSystemUtils.calculate_byte_to_read_index(DriverService.get_c_pga())]
+
+    @staticmethod
+    def get_q_v_inter() -> list:
+        return []  # TODO
+
+    @staticmethod
+    def get_current_q_v_inter() -> int:
+        return 0  # TODO
+
+    @staticmethod
+    def get_q_c_inter() -> list:
+        return []  # TODO
+
+    @staticmethod
+    def get_current_q_c_inter() -> int:
+        return 0  # TODO
+
+    @staticmethod
+    def set_mode() -> None:
+        return None  # TODO
+
+    @staticmethod
+    def get_mode() -> str:
+        return ''  # TODO
+
+    @staticmethod
+    def set_vref() -> None:
+        return None  # TODO
+
+    @staticmethod
     def get_voltage_and_current() -> dict:
-        voltage_and_current = DriverService.send_command(CommandEnum.GET_VOLTAGE_AND_CURRENT)
+        raw_voltage_and_current = DriverService.send_command(CommandEnum.GET_VOLTAGE_AND_CURRENT)
 
-        voltage = NumeralSystemUtils.merge_bytes_as_decimal(*voltage_and_current[3:5])
-        current = NumeralSystemUtils.merge_bytes_as_decimal(*voltage_and_current[5:7])
-
-        p = ParameterStateSingleton().get_instance()
+        # TODO może dodać voltage i current do state'a? Jakby się odpytywać o to bez przesunięcia vref to bez sensu obliczać jeszcze raz.
+        raw_voltage = NumeralSystemUtils.merge_bytes_as_decimal(*raw_voltage_and_current[3:5])
+        raw_current = NumeralSystemUtils.merge_bytes_as_decimal(*raw_voltage_and_current[5:7])
 
         return {
-            'voltage': (DriverService.calculate_adc_from_raw_value(voltage, p.v_pga) * p.v_slope) + p.v_inter,
-            'current': (DriverService.calculate_adc_from_raw_value(current, p.c_pga) * p.c_slope) + p.c_inter,
+            'voltage': (
+                           DriverService.calculate_adc_from_raw_value(raw_voltage, DriverService.get_v_pga())
+                           * DriverService.get_v_slope()
+                       ) + DriverService.get_v_inter(),
+            'current': (
+                           DriverService.calculate_adc_from_raw_value(raw_current, DriverService.get_c_pga())
+                           * DriverService.get_c_slope()
+                       ) + DriverService.get_c_inter(),
         }
