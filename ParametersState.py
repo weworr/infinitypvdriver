@@ -218,7 +218,7 @@ class ParametersState:
         self.__c_step = value
 
     def regenerate_soft_values(self) -> None:
-        from service.DriverService import DriverService
+        from services.DriverService import DriverService
 
         self.v_min = DriverService.get_v_min()
         self.v_max = DriverService.get_v_max()

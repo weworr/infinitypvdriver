@@ -9,7 +9,7 @@ class MockSerial:
         self.__data = data
 
     def readline(self) -> bytes:
-        print(self.__data[1])
+        # print(self.__data[1])
         match self.__data[1]:
             case CommandEnum.GET_INTERNAL_IDN.value:
                 return bytes([102, 1, 2, 0, 142, 247, 64, 0, 44, 52])

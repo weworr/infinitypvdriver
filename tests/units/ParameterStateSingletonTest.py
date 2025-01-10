@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 
 from ParameterStateSingleton import ParameterStateSingleton
-from service.DriverService import DriverService
+from services.DriverService import DriverService
 
 
 class ParameterStateSingletonTest(unittest.TestCase):
