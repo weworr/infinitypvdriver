@@ -3,7 +3,7 @@ from unittest.mock import Mock, patch
 
 from service.DriverService import DriverService
 from utils.NumeralSystemUtils import NumeralSystemUtils
-from mock.MockSerial import MockSerial
+from mocks.MockSerial import MockSerial
 
 from SerialHandler import SerialHandler
 

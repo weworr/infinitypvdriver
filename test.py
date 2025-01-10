@@ -1,7 +1,6 @@
-from CommandEnum import CommandEnum
+from enums.CommandEnum import CommandEnum
 from service.DriverService import DriverService
 from utils.NumeralSystemUtils import NumeralSystemUtils
-from ParameterStateSingleton import ParameterStateSingleton
 from SerialHandler import SerialHandler
 
 
@@ -231,8 +230,13 @@ def get_current_q_c_inter() -> int:
 # region Working Commands
 # ===========================
 
-def set_mode() -> None:
-    return DriverService.set_mode()
+def set_mode(mode: str) -> None:
+    """
+    Ustawia tryb działania urządzenia. Domyślnym trybem jest tryb "VFIX" - manualny.
+    :param mode: Należy podać odpowiednią wartość. Dla manualnego ustawiania i wykonywania kroku "VFIX",
+        dla automatycznego "MPPT".
+    """
+    return DriverService.set_mode(mode)
 
 
 def get_mode() -> str:
@@ -259,7 +263,7 @@ def get_voltage_and_current() -> dict:
 def main():
     init()
     print('===============================')
-    print(get_c_inter())
+    print(set_mode('asd'))
 
 
 if __name__ == '__main__':
