@@ -189,19 +189,39 @@ def get_current_q_c_slope() -> int:
     return DriverService.get_current_q_c_slope()
 
 
-def get_q_v_inter() -> list:
-    return DriverService.get_q_v_inter()
+def get_q_v_inter() -> dict:
+    q_v_inter = DriverService.get_q_v_inter()
+
+    return {
+        'q_v_inter_x1': q_v_inter[0],
+        'q_v_inter_x2': q_v_inter[1],
+        'q_v_inter_x4': q_v_inter[2],
+        'q_v_inter_x8': q_v_inter[3]
+    }
 
 
 def get_current_q_v_inter() -> int:
+    """
+    Funkcja sterownika.
+    """
     return DriverService.get_current_q_v_inter()
 
 
-def get_q_c_inter() -> list:
-    return DriverService.get_q_c_inter()
+def get_q_c_inter() -> dict:
+    q_c_inter = DriverService.get_q_c_inter()
+
+    return {
+        'q_c_inter_x1': q_c_inter[0],
+        'q_c_inter_x2': q_c_inter[1],
+        'q_c_inter_x4': q_c_inter[2],
+        'q_c_inter_x8': q_c_inter[3]
+    }
 
 
 def get_current_q_c_inter() -> int:
+    """
+    Funkcja sterownika.
+    """
     return DriverService.get_current_q_c_inter()
 
 # endregion Calibration Commands

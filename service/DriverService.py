@@ -223,11 +223,13 @@ class DriverService:
     def get_v_inter() -> float:
         p = ParameterStateSingleton.get_instance()
 
-        return NumeralSystemUtils.merge_bytes_as_decimal_with_fractional_bits(
-            *DriverService.send_command(CommandEnum.GET_V_INTER)[3:7],
-            fractional_bits=(DriverService.send_command(CommandEnum.GET_Q_V_INTER)[3:7])[  # TODO
-                NumeralSystemUtils.calculate_byte_to_read_index(DriverService.get_v_pga())]
-        )
+        if p.v_inter is None:
+            p.v_inter = NumeralSystemUtils.merge_bytes_as_decimal_with_fractional_bits(
+                *DriverService.send_command(CommandEnum.GET_V_INTER)[3:7],
+                fractional_bits=DriverService.get_current_q_v_inter()
+            )
+
+        return p.v_inter
 
     @staticmethod
     def get_c_slope() -> float:
@@ -245,11 +247,13 @@ class DriverService:
     def get_c_inter() -> float:
         p = ParameterStateSingleton.get_instance()
 
-        return NumeralSystemUtils.merge_bytes_as_decimal_with_fractional_bits(
-            *DriverService.send_command(CommandEnum.GET_C_INTER)[3:7],
-            fractional_bits=(DriverService.send_command(CommandEnum.GET_Q_C_INTER)[3:7])[  # TODO
-                NumeralSystemUtils.calculate_byte_to_read_index(DriverService.get_c_pga())]
-        )
+        if p.c_inter is None:
+            p.c_inter = NumeralSystemUtils.merge_bytes_as_decimal_with_fractional_bits(
+                *DriverService.send_command(CommandEnum.GET_C_INTER)[3:7],
+                fractional_bits=DriverService.get_current_q_c_inter()
+            )
+
+        return p.c_inter
 
     @staticmethod
     def get_q_v_slope() -> list:
@@ -279,19 +283,29 @@ class DriverService:
 
     @staticmethod
     def get_q_v_inter() -> list:
-        return []  # TODO
+        p = ParameterStateSingleton.get_instance()
+
+        if not p.q_v_inter:
+            p.q_v_inter = DriverService.send_command(CommandEnum.GET_Q_V_INTER)[3:7]
+
+        return p.q_v_inter
 
     @staticmethod
     def get_current_q_v_inter() -> int:
-        return 0  # TODO
+        return DriverService.get_q_v_inter()[NumeralSystemUtils.calculate_byte_to_read_index(DriverService.get_v_pga())]
 
     @staticmethod
     def get_q_c_inter() -> list:
-        return []  # TODO
+        p = ParameterStateSingleton.get_instance()
+
+        if not p.q_c_inter:
+            p.q_c_inter = DriverService.send_command(CommandEnum.GET_Q_C_INTER)[3:7]
+
+        return p.q_c_inter
 
     @staticmethod
     def get_current_q_c_inter() -> int:
-        return 0  # TODO
+        return DriverService.get_q_c_inter()[NumeralSystemUtils.calculate_byte_to_read_index(DriverService.get_c_pga())]
 
     @staticmethod
     def set_mode() -> None:
