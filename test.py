@@ -239,8 +239,8 @@ def get_mode() -> str:
     return DriverService.get_mode()
 
 
-def set_vref() -> None:
-    return DriverService.set_vref()
+def set_v_ref(v_ref: int) -> None:
+    return DriverService.set_v_ref(v_ref)
 
 
 def get_voltage_and_current() -> dict:

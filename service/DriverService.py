@@ -185,11 +185,25 @@ class DriverService:
 
     @staticmethod
     def get_v_pga() -> int:
-        return 1  # TODO
+        p = ParameterStateSingleton.get_instance()
+
+        if p.v_pga is None:
+            p.v_pga = NumeralSystemUtils.merge_bytes_as_decimal_command_result(
+                DriverService.send_command(CommandEnum.GET_V_PGA)
+            )
+
+        return p.v_pga
 
     @staticmethod
     def get_c_pga() -> int:
-        return 1  # TODO
+        p = ParameterStateSingleton.get_instance()
+
+        if p.c_pga is None:
+            p.c_pga = NumeralSystemUtils.merge_bytes_as_decimal_command_result(
+                DriverService.send_command(CommandEnum.GET_C_PGA)
+            )
+
+        return p.c_pga
 
     @staticmethod
     def set_v_pga(pga: int) -> None:
@@ -313,11 +327,23 @@ class DriverService:
 
     @staticmethod
     def get_mode() -> str:
-        return ''  # TODO
+        p = ParameterStateSingleton.get_instance()
+
+        if p.mode is None:
+            p.mode = NumeralSystemUtils.merge_bytes_as_decimal_command_result(
+                DriverService.send_command(CommandEnum.SET_MODE)
+            )
+
+        return p.mode
 
     @staticmethod
-    def set_vref() -> None:
-        return None  # TODO
+    def set_v_ref(v_ref: int) -> None:
+        DriverService.send_command(
+            CommandEnum.SET_V_REF,
+            v_ref
+        )
+
+        ParameterStateSingleton.get_instance().v_ref = v_ref
 
     @staticmethod
     def get_voltage_and_current() -> dict:

@@ -44,5 +44,5 @@ class CommandEnum(Enum):
     SET_MODE = 0x2D
     GET_MODE = 0x2E
 
-    SET_VREF = 0x2B
+    SET_V_REF = 0x2B
     GET_VOLTAGE_AND_CURRENT = 0x2C

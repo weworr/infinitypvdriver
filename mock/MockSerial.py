@@ -77,7 +77,7 @@ class MockSerial:
             case CommandEnum.GET_MODE.value:
                 return bytes([102, 1, 2, 0, 0, 0, 0, 0, 44, 52])  # Invalid
 
-            case CommandEnum.SET_VREF.value:
+            case CommandEnum.SET_V_REF.value:
                 return bytes([102, 1, 2, 0, 0, 0, 0, 0, 44, 52])  # Invalid
 
             case CommandEnum.GET_VOLTAGE_AND_CURRENT.value:
