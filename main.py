@@ -1,6 +1,14 @@
 from SerialHandler import SerialHandler
 from services.DriverService import DriverService
 
+# TODO
+#   - Logger
+#   - vref na różne sposoby
+#   - dekorator/lub po prostu coś innego handlera na close
+#   - testy
+#   - dokumentacja :(
+#   - weryfikacja "TODO Do weryfikacji" 14.01
+
 
 def init() -> None:
     """

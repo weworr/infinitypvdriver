@@ -65,7 +65,7 @@ class DriverService:
 
         DriverService.__send_command(CommandEnum.ACTIVE_UNIT, data_lsb=channel)
 
-        # TODO Powinniśmy trzymać konfiurację per channel.
+        # TODO Do weryfikacji. Powinniśmy trzymać konfiurację per channel.
         #  Jakby mieli się przełączać to chyba nie zmieni się konfiguracja co?
         #  Trzeba to będzie też testnąć. ;)
 
@@ -355,7 +355,6 @@ class DriverService:
     def get_voltage_and_current() -> dict:
         raw_voltage_and_current = DriverService.__send_command(CommandEnum.GET_VOLTAGE_AND_CURRENT)
 
-        # TODO może dodać voltage i current do state'a? Jakby się odpytywać o to bez przesunięcia vref to bez sensu obliczać jeszcze raz.
         raw_voltage = NumericUtils.merge_bytes_as_decimal(*raw_voltage_and_current[3:5])
         raw_current = NumericUtils.merge_bytes_as_decimal(*raw_voltage_and_current[5:7])
 

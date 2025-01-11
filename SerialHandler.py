@@ -48,8 +48,9 @@ def module_decorator(func: callable) -> callable:
         try:
             return func(*args, **kwargs)
         except Exception as e:
-            if 'serialHandler' in globals() and isinstance(serialHandler, serial.Serial) and serialHandler.is_open:
-                serialHandler.close()
+            serial_handler = SerialHandler().get_instance()
+            if 'serialHandler' in globals() and isinstance(serial_handler, serial.Serial) and serial_handler.is_open:
+                serial_handler.close()
 
             raise e
 
@@ -57,19 +58,7 @@ def module_decorator(func: callable) -> callable:
 
 
 @module_decorator
-def create_instance() -> str:
-    global serialHandler
-    serialHandler = SerialHandler().get_instance()
-
-    return 'Open'
-
-
-@module_decorator
 def close_connection() -> str:
-    serialHandler.close()
+    SerialHandler().get_instance().close()
 
     return 'Closed'
-
-
-def wait() -> None:
-    time.sleep(10)
