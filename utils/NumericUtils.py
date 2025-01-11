@@ -56,6 +56,11 @@ class NumericUtils:
     def calculate_dac(voltage: float) -> int:
         from services.DriverService import DriverService
 
+        # TODO Sobijanek - nie podoba mi się to, że jest tutaj DriverService wpięty. xd
         return math.floor(
             4095 * (voltage - DriverService.get_v_min()) / (DriverService.get_v_max() - DriverService.get_v_min())
         )
+
+    @staticmethod
+    def calculate_voltage_from_dac(dac: int, v_min: float, v_max: float) -> float:
+        

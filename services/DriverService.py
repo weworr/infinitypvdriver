@@ -40,6 +40,11 @@ class DriverService:
         p.q_limits_c_max = q_limits[3]
 
     @staticmethod
+    def __validate_dac(dac: int) -> None:
+        if dac < 0 or dac > 4095:
+            raise Exception('DAC must be in range (0 ; 4096)')
+
+    @staticmethod
     def init_driver():
         ParameterStateSingleton.set_active_channel(1)
 
@@ -357,6 +362,23 @@ class DriverService:
         )
 
         ParameterStateSingleton.get_instance().v_ref = dac
+
+    @staticmethod
+    def set_v_ref_step(dac_step: int) -> None:
+        DriverService.__validate_dac(dac_step)
+        p = ParameterStateSingleton.get_instance()
+
+        p.dac_step = dac_step
+
+
+    @staticmethod
+    def set_v_ref_step_by_voltage(voltage: float) -> None:
+        DriverService.set_v_ref_step(NumericUtils.calculate_dac(voltage))
+
+    @staticmethod
+    def set_next_v_ref() -> None:
+        p = ParameterStateSingleton.get_instance().dac_step
+        DriverService.set_v_ref_by_dac()
 
     @staticmethod
     def get_voltage_and_current() -> dict:

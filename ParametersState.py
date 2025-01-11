@@ -26,8 +26,8 @@ class ParametersState:
 
         self.__mode: str | None = None
         self.__v_ref: int | None = None
+        self.__dac_step: int | None = None
         self.__v_step: int | None = None
-        self.__c_step: int | None = None
 
     @property
     def channel(self) -> int | None:
@@ -202,20 +202,20 @@ class ParametersState:
         self.__v_ref = value
 
     @property
+    def dac_step(self) -> int | None:
+        return self.__dac_step
+
+    @dac_step.setter
+    def dac_step(self, value: int) -> None:
+        self.__dac_step = value
+
+    @property
     def v_step(self) -> int | None:
         return self.__v_step
 
-    @v_step.setter
+    @step_v.setter
     def v_step(self, value: int) -> None:
         self.__v_step = value
-
-    @property
-    def c_step(self) -> int | None:
-        return self.__c_step
-
-    @c_step.setter
-    def c_step(self, value: int) -> None:
-        self.__c_step = value
 
     def regenerate_soft_values(self) -> None:
         from services.DriverService import DriverService

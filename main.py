@@ -259,13 +259,22 @@ def get_mode() -> str:
     return DriverService.get_mode()
 
 
-def set_v_ref_by_dac(dac: int) -> None:
+def set_v_ref(dac: int) -> None:
     return DriverService.set_v_ref_by_dac(dac)
 
 
 def set_v_ref_by_voltage(voltage: float) -> None:
+    """
+    Funkcja sterownika.
+    """
     return DriverService.set_v_ref_by_voltage(voltage)
 
+
+def next_step() -> None:
+    """
+    Funkcja sterownika
+    """
+    return DriverService.set_next_v_ref()
 
 def get_voltage_and_current() -> dict:
     """
@@ -281,6 +290,4 @@ def get_voltage_and_current() -> dict:
 
 
 if __name__ == '__main__':
-    # init()
-
-    NumericUtils.calculate_value_from_q_format(32321037567, 28)
+    init()
