@@ -343,13 +343,23 @@ class DriverService:
         return p.mode
 
     @staticmethod
-    def set_v_ref(v_ref: int) -> None:
+    def set_v_ref_by_dac(dac: int) -> None:
         DriverService.__send_command(
             CommandEnum.SET_V_REF,
-            v_ref
+            dac
         )
 
-        ParameterStateSingleton.get_instance().v_ref = v_ref
+        ParameterStateSingleton.get_instance().v_ref = dac
+
+    @staticmethod
+    def set_v_ref_by_voltage(voltage: float) -> None:
+        dac: int = NumericUtils.calculate_dac(voltage)
+        DriverService.__send_command(
+            CommandEnum.SET_V_REF,
+            dac
+        )
+
+        ParameterStateSingleton.get_instance().v_ref = dac
 
     @staticmethod
     def get_voltage_and_current() -> dict:

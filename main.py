@@ -8,6 +8,9 @@ from services.DriverService import DriverService
 #   - testy
 #   - dokumentacja :(
 #   - weryfikacja "TODO Do weryfikacji" 14.01
+#   - README
+#   - wywalić poza folder główny reszte klas
+#   - i zrobić coś z reset.py
 
 
 def init() -> None:
@@ -255,8 +258,12 @@ def get_mode() -> str:
     return DriverService.get_mode()
 
 
-def set_v_ref(v_ref: int) -> None:
-    return DriverService.set_v_ref(v_ref)
+def set_v_ref_by_dac(dac: int) -> None:
+    return DriverService.set_v_ref_by_dac(dac)
+
+
+def set_v_ref_by_voltage(voltage: float) -> None:
+    return DriverService.set_v_ref_by_voltage(voltage)
 
 
 def get_voltage_and_current() -> dict:

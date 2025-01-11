@@ -1,3 +1,4 @@
+import math
 from math import log2
 
 BYTE_SIZE = 8
@@ -50,3 +51,11 @@ class NumericUtils:
         Służy do obliczenia indeksu bajtu, który trzeba odczytać z funkcji [0x3F - 0x42]
         """
         return int(log2(pga_configuration))
+
+    @staticmethod
+    def calculate_dac(voltage: float) -> int:
+        from services.DriverService import DriverService
+
+        return math.floor(
+            4095 * (voltage - DriverService.get_v_min()) / (DriverService.get_v_max() - DriverService.get_v_min())
+        )
