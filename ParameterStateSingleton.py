@@ -14,11 +14,18 @@ class ParameterStateSingleton:
         ParameterStateSingleton.__active_channel = channel
 
     @staticmethod
+    def get_active_channel() -> int:
+        return ParameterStateSingleton.__active_channel
+
+    @staticmethod
     def get_max_channel() -> int:
         return ParameterStateSingleton.__MAX_CHANNEL
 
     @staticmethod
     def get_instance() -> ParametersState:
+        if ParameterStateSingleton.__active_channel is None:
+            raise RuntimeError('Active channel is not set.')
+
         return ParameterStateSingleton.__instances[ParameterStateSingleton.__active_channel]
 
     @staticmethod

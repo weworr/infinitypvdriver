@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, PropertyMock
 
 from ParameterStateSingleton import ParameterStateSingleton
 from services.DriverService import DriverService
@@ -20,6 +20,13 @@ class ParameterStateSingletonTest(unittest.TestCase):
 
             self.assertEqual(ParameterStateSingleton.get_instance().channel, i)
 
+    def test_get_instance_without_active_channel(self):
+        with patch.object(
+                ParameterStateSingleton,
+                '_ParameterStateSingleton__active_channel',
+                new_callable=PropertyMock
+        ) as mock:
+            mock.return_value = None
 
-if __name__ == '__main__':
-    unittest.main(verbosity=2)
+            with self.assertRaises(RuntimeError):
+                ParameterStateSingleton.get_instance()

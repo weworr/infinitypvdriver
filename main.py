@@ -1,11 +1,12 @@
 from SerialHandler import SerialHandler
 from services.DriverService import DriverService
+from utils.NumericUtils import NumericUtils
+
 
 # TODO
 #   - Logger
 #   - vref na różne sposoby
 #   - dekorator/lub po prostu coś innego handlera na close
-#   - testy
 #   - dokumentacja :(
 #   - weryfikacja "TODO Do weryfikacji" 14.01
 #   - README
@@ -280,4 +281,6 @@ def get_voltage_and_current() -> dict:
 
 
 if __name__ == '__main__':
-    init()
+    # init()
+
+    NumericUtils.calculate_value_from_q_format(32321037567, 28)

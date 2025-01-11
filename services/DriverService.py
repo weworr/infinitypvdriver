@@ -23,10 +23,10 @@ class DriverService:
     @staticmethod
     def __calculate_value_from_q_format(command: CommandEnum, q: int) -> float:
         return NumericUtils.calculate_value_from_q_format(
-             NumericUtils.merge_bytes_as_decimal_command_result(
-                 DriverService.__send_command(command)
-             ),
-             q
+            NumericUtils.merge_bytes_as_decimal_command_result(
+                DriverService.__send_command(command)
+            ),
+            q
         )
 
     @staticmethod
@@ -60,7 +60,7 @@ class DriverService:
 
     @staticmethod
     def active_unit(channel: int) -> None:
-        if 0 > channel or channel > 7:
+        if channel < 0 or channel > 7:
             raise Exception('Channel must be between 0 and 7.')
 
         DriverService.__send_command(CommandEnum.ACTIVE_UNIT, data_lsb=channel)
@@ -320,13 +320,10 @@ class DriverService:
     def set_mode(mode: str) -> None:
         p = ParameterStateSingleton.get_instance()
 
-        match mode:
-            case ModeEnum.VFIX.name:
-                mode_enum = ModeEnum.VFIX
-            case ModeEnum.MPPT.name:
-                mode_enum = ModeEnum.MPPT
-            case _:
-                raise Exception('Unsupported working mode. Available working modes are "VFIX" and "MPPT".')
+        try:
+            mode_enum = ModeEnum[mode]
+        except KeyError:
+            raise Exception('Unsupported working mode. Available working modes are "VFIX" and "MPPT".')
 
         DriverService.__send_command(CommandEnum.SET_MODE, mode_enum.value)
         p.mode = mode_enum.name
@@ -337,7 +334,7 @@ class DriverService:
 
         if p.mode is None:
             p.mode = NumericUtils.merge_bytes_as_decimal_command_result(
-                DriverService.__send_command(CommandEnum.SET_MODE)
+                DriverService.__send_command(CommandEnum.GET_MODE)
             )
 
         return p.mode
@@ -370,11 +367,11 @@ class DriverService:
 
         return {
             'voltage': (
-                           NumericUtils.calculate_adc_from_raw_value(raw_voltage, DriverService.get_v_pga())
-                           * DriverService.get_v_slope()
+                               NumericUtils.calculate_adc_from_raw_value(raw_voltage, DriverService.get_v_pga())
+                               * DriverService.get_v_slope()
                        ) + DriverService.get_v_inter(),
             'current': (
-                           NumericUtils.calculate_adc_from_raw_value(raw_current, DriverService.get_c_pga())
-                           * DriverService.get_c_slope()
+                               NumericUtils.calculate_adc_from_raw_value(raw_current, DriverService.get_c_pga())
+                               * DriverService.get_c_slope()
                        ) + DriverService.get_c_inter(),
         }

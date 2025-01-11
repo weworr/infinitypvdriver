@@ -1,7 +1,7 @@
 import time
 import serial
 
-from mocks.MockSerial import MockSerial
+from tests.mocks.MockSerial import MockSerial
 
 global error
 
