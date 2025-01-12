@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import patch, mock_open
 
 from ParameterStateSingleton import ParameterStateSingleton
 from services.DriverService import DriverService
@@ -6,7 +7,12 @@ from services.DriverService import DriverService
 
 class DriverServiceTest(unittest.TestCase):
     def setUp(self) -> None:
+        patch('builtins.open', new_callable=mock_open).start()
+
         DriverService.init_driver()
+
+    def tearDown(self) -> None:
+        patch.stopall()
 
     def test_get_internal_idn(self) -> None:
         self.assertEqual(
