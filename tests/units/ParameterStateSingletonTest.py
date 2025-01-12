@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import patch, PropertyMock
+from unittest.mock import patch, PropertyMock, mock_open
 
 from ParameterStateSingleton import ParameterStateSingleton
 from services.DriverService import DriverService
@@ -7,6 +7,8 @@ from services.DriverService import DriverService
 
 class ParameterStateSingletonTest(unittest.TestCase):
     def setUp(self) -> None:
+        patch('builtins.open', new_callable=mock_open).start()
+
         DriverService.init_driver()
 
     def tearDown(self) -> None:

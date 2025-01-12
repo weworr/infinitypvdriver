@@ -1,10 +1,11 @@
+from SerialHandler import SerialHandler
 import serial
 
 from ParametersState import ParametersState
 from enums.CommandEnum import CommandEnum
 from ParameterStateSingleton import ParameterStateSingleton
-from SerialHandler import SerialHandler
 from enums.ModeEnum import ModeEnum
+from logger.LoggerDecorator import command_logger
 from utils.NumericUtils import NumericUtils
 
 
@@ -13,6 +14,7 @@ MAX_DAC: int = 4095
 
 
 class DriverService:
+    @command_logger
     @staticmethod
     def __send_command(
             command: CommandEnum,

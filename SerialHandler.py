@@ -3,8 +3,6 @@ import serial
 
 from tests.mocks.MockSerial import MockSerial
 
-global error
-
 
 MOCK = True
 
@@ -25,16 +23,21 @@ class SerialHandler:
                 cls.__instance = MockSerial()
                 return cls.__instance
 
-            cls.__instance = serial.Serial(
-                port,
-                baudrate=9600,
-                bytesize=serial.EIGHTBITS,
-                parity=serial.PARITY_NONE,
-                stopbits=serial.STOPBITS_ONE,
-                timeout=1
-            )
+            try:
+                cls.__instance = serial.Serial(
+                    port,
+                    baudrate=9600,
+                    bytesize=serial.EIGHTBITS,
+                    parity=serial.PARITY_NONE,
+                    stopbits=serial.STOPBITS_ONE,
+                    timeout=1
+                )
+            except Exception as e:
+                cls.__close_connection()
 
-            time.sleep(2)
+                raise e
+            finally:
+                time.sleep(2)
 
         return cls.__instance
 
@@ -42,23 +45,10 @@ class SerialHandler:
     def is_initialized(cls) -> bool:
         return cls.__instance is not None
 
+    @classmethod
+    def __close_connection(cls) -> str:
+        if cls.__instance is not None:
+            cls.__instance.close()
+            cls.__instance = None
 
-def module_decorator(func: callable) -> callable:
-    def wrapper(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except Exception as e:
-            serial_handler = SerialHandler().get_instance()
-            if 'serialHandler' in globals() and isinstance(serial_handler, serial.Serial) and serial_handler.is_open:
-                serial_handler.close()
-
-            raise e
-
-    return wrapper
-
-
-@module_decorator
-def close_connection() -> str:
-    SerialHandler().get_instance().close()
-
-    return 'Closed'
+        return 'Closed'

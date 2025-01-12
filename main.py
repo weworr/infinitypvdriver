@@ -1,4 +1,5 @@
 from SerialHandler import SerialHandler
+from logger.LoggerDecorator import function_logger
 from services.DriverService import DriverService
 from utils.NumericUtils import NumericUtils
 
@@ -13,7 +14,7 @@ from utils.NumericUtils import NumericUtils
 #   - wywalić poza folder główny reszte klas
 #   - i zrobić coś z reset.py
 
-
+@function_logger
 def init() -> None:
     """
     Funkcja sterownika.
@@ -25,6 +26,7 @@ def init() -> None:
     DriverService.init_driver()
 
 
+@function_logger
 def set_serial_port(port: str) -> None:
     """
     Funkcja sterownika.
@@ -46,6 +48,7 @@ def set_serial_port(port: str) -> None:
 # ===========================
 # region General Commands
 # ===========================
+@function_logger
 def get_internal_idn() -> int:
     """
     :return: Numer identyfikacyjny urządzenia
@@ -53,6 +56,7 @@ def get_internal_idn() -> int:
     return DriverService.get_internal_idn()
 
 
+@function_logger
 def active_unit(channel: int) -> None:
     """
     Ustawia komunikację z jedynm z ośmiu kanałów.
@@ -61,6 +65,7 @@ def active_unit(channel: int) -> None:
     DriverService.active_unit(channel)
 
 
+@function_logger
 def get_unit_idn() -> int:
     """
     :return: Numer identyfikacyjny kanału.
@@ -73,22 +78,27 @@ def get_unit_idn() -> int:
 # ===========================
 # region Calibration Commands
 # ===========================
+@function_logger
 def get_v_min() -> int:
     return DriverService.get_v_min()
 
 
+@function_logger
 def get_v_max() -> int:
     return DriverService.get_v_max()
 
 
+@function_logger
 def get_c_min() -> int:
     return DriverService.get_c_min()
 
 
+@function_logger
 def get_c_max() -> int:
     return DriverService.get_c_max()
 
 
+@function_logger
 def get_v_and_c_range() -> dict[str, float]:
     return {
         'v_min': DriverService.get_v_min(),
@@ -98,10 +108,12 @@ def get_v_and_c_range() -> dict[str, float]:
     }
 
 
+@function_logger
 def get_q_limits() -> dict[str, int]:
     return DriverService.get_q_limits()
 
 
+@function_logger
 def get_q_limit_v_min() -> int:
     """
     Funkcja sterownika.
@@ -109,6 +121,7 @@ def get_q_limit_v_min() -> int:
     return DriverService.get_q_limits_v_min()
 
 
+@function_logger
 def get_q_limit_v_max() -> int:
     """
     Funkcja sterownika.
@@ -116,6 +129,7 @@ def get_q_limit_v_max() -> int:
     return DriverService.get_q_limits_v_max()
 
 
+@function_logger
 def get_q_limit_c_min() -> int:
     """
     Funkcja sterownika.
@@ -123,6 +137,7 @@ def get_q_limit_c_min() -> int:
     return DriverService.get_q_limits_c_min()
 
 
+@function_logger
 def get_q_limit_c_max() -> int:
     """
     Funkcja sterownika.
@@ -130,14 +145,17 @@ def get_q_limit_c_max() -> int:
     return DriverService.get_q_limits_c_max()
 
 
+@function_logger
 def get_v_pga() -> int:
     return DriverService.get_v_pga()
 
 
+@function_logger
 def get_c_pga() -> int:
     return DriverService.get_c_pga()
 
 
+@function_logger
 def set_v_pga(pga: int) -> None:
     """
     :param pga: Programmable Gain Amplifier. Akceptowalna jest jedynie jedna z liczb: 1, 2, 4, 8.
@@ -145,6 +163,7 @@ def set_v_pga(pga: int) -> None:
     DriverService.set_v_pga(pga)
 
 
+@function_logger
 def set_c_pga(pga: int) -> None:
     """
     :param pga: Programmable Gain Amplifier. Akceptowalna jest jedynie jedna z liczb: 1, 2, 4, 8.
@@ -152,22 +171,27 @@ def set_c_pga(pga: int) -> None:
     DriverService.set_c_pga(pga)
 
 
+@function_logger
 def get_v_slope() -> float:
     return DriverService.get_v_slope()
 
 
+@function_logger
 def get_v_inter() -> float:
     return DriverService.get_v_inter()
 
 
+@function_logger
 def get_c_slope() -> float:
     return DriverService.get_c_slope()
 
 
+@function_logger
 def get_c_inter() -> float:
     return DriverService.get_c_inter()
 
 
+@function_logger
 def get_q_v_slope() -> dict[str, int]:
     q_v_slope = DriverService.get_q_v_slope()
 
@@ -179,6 +203,7 @@ def get_q_v_slope() -> dict[str, int]:
     }
 
 
+@function_logger
 def get_current_q_v_slope() -> int:
     """
     Funkcja sterownika.
@@ -186,6 +211,7 @@ def get_current_q_v_slope() -> int:
     return DriverService.get_current_q_v_slope()
 
 
+@function_logger
 def get_q_c_slope() -> dict[str, int]:
     q_c_slope = DriverService.get_q_c_slope()
 
@@ -197,6 +223,7 @@ def get_q_c_slope() -> dict[str, int]:
     }
 
 
+@function_logger
 def get_current_q_c_slope() -> int:
     """
     Funkcja sterownika.
@@ -204,6 +231,7 @@ def get_current_q_c_slope() -> int:
     return DriverService.get_current_q_c_slope()
 
 
+@function_logger
 def get_q_v_inter() -> dict[str, int]:
     q_v_inter = DriverService.get_q_v_inter()
 
@@ -215,6 +243,7 @@ def get_q_v_inter() -> dict[str, int]:
     }
 
 
+@function_logger
 def get_current_q_v_inter() -> int:
     """
     Funkcja sterownika.
@@ -222,6 +251,7 @@ def get_current_q_v_inter() -> int:
     return DriverService.get_current_q_v_inter()
 
 
+@function_logger
 def get_q_c_inter() -> dict[str, int]:
     q_c_inter = DriverService.get_q_c_inter()
 
@@ -233,6 +263,7 @@ def get_q_c_inter() -> dict[str, int]:
     }
 
 
+@function_logger
 def get_current_q_c_inter() -> int:
     """
     Funkcja sterownika.
@@ -246,6 +277,7 @@ def get_current_q_c_inter() -> int:
 # region Working Commands
 # ===========================
 
+@function_logger
 def set_mode(mode: str) -> None:
     """
     Ustawia tryb działania urządzenia. Domyślnym trybem jest tryb "VFIX" - manualny.
@@ -255,14 +287,17 @@ def set_mode(mode: str) -> None:
     return DriverService.set_mode(mode)
 
 
+@function_logger
 def get_mode() -> str:
     return DriverService.get_mode()
 
 
+@function_logger
 def set_v_ref(dac: int) -> None:
     return DriverService.set_v_ref_by_dac(dac)
 
 
+@function_logger
 def set_v_ref_by_voltage(voltage: float) -> None:
     """
     Funkcja sterownika.
@@ -270,6 +305,7 @@ def set_v_ref_by_voltage(voltage: float) -> None:
     return DriverService.set_v_ref_by_voltage(voltage)
 
 
+@function_logger
 def get_current_v_ref() -> int:
     """
     Funkcja sterownika
@@ -277,6 +313,7 @@ def get_current_v_ref() -> int:
     return DriverService.get_current_v_ref_as_dac()
 
 
+@function_logger
 def get_current_v_ref_as_voltage() -> float:
     """
     Funkcja sterownika
@@ -284,6 +321,7 @@ def get_current_v_ref_as_voltage() -> float:
     return DriverService.get_current_v_ref_as_v()
 
 
+@function_logger
 def set_v_ref_step(dac: int) -> None:
     """
     Funkcja sterownika
@@ -291,6 +329,7 @@ def set_v_ref_step(dac: int) -> None:
     DriverService.set_v_ref_step(dac)
 
 
+@function_logger
 def set_v_ref_step_by_voltage(voltage: float) -> None:
     """
     Funkcja sterownika
@@ -298,6 +337,7 @@ def set_v_ref_step_by_voltage(voltage: float) -> None:
     DriverService.set_v_ref_step_by_voltage(voltage)
 
 
+@function_logger
 def next_step() -> None:
     """
     Funkcja sterownika
@@ -305,10 +345,12 @@ def next_step() -> None:
     DriverService.next_step()
 
 
+@function_logger
 def change_step_direction() -> None:
     DriverService.change_step_direction()
 
 
+@function_logger
 def get_voltage_and_current() -> dict[str, float]:
     return DriverService.get_voltage_and_current()
 
