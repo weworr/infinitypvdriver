@@ -19,13 +19,13 @@ class ParametersState:
         self.__q_limits_c_min: int | None = None
         self.__q_limits_c_max: int | None = None
 
-        self.__q_c_slope: list = []  # TODO Do weryfikacji, czy wartość jest stała niezależnie od vref i gain
-        self.__q_c_inter: list = []  # TODO Do weryfikacji, czy wartość jest stała niezależnie od vref i gain
-        self.__q_v_slope: list = []  # TODO Do weryfikacji, czy wartość jest stała niezależnie od vref i gain
-        self.__q_v_inter: list = []  # TODO Do weryfikacji, czy wartość jest stała niezależnie od vref i gain
+        self.__q_c_slope: list[int] = []  # TODO Do weryfikacji, czy wartość jest stała niezależnie od vref i gain
+        self.__q_c_inter: list[int] = []  # TODO Do weryfikacji, czy wartość jest stała niezależnie od vref i gain
+        self.__q_v_slope: list[int] = []  # TODO Do weryfikacji, czy wartość jest stała niezależnie od vref i gain
+        self.__q_v_inter: list[int] = []  # TODO Do weryfikacji, czy wartość jest stała niezależnie od vref i gain
 
         self.__mode: str | None = None
-        self.__v_ref: int | None = None
+        self.__v_ref: int = 0  # TODO Do weryfikacji, czy wartość jest 0 na start.
         self.__dac_step: int | None = None
         self.__v_step: int | None = None
 
@@ -154,35 +154,35 @@ class ParametersState:
         self.__q_limits_c_max = value
 
     @property
-    def q_c_slope(self) -> list:
+    def q_c_slope(self) -> list[int]:
         return self.__q_c_slope
 
     @q_c_slope.setter
-    def q_c_slope(self, value) -> None:
+    def q_c_slope(self, value: list[int]) -> None:
         self.__q_c_slope = value
 
     @property
-    def q_c_inter(self) -> list:
+    def q_c_inter(self) -> list[int]:
         return self.__q_c_inter
 
     @q_c_inter.setter
-    def q_c_inter(self, value) -> None:
+    def q_c_inter(self, value: list[int]) -> None:
         self.__q_c_inter = value
 
     @property
-    def q_v_slope(self) -> list:
+    def q_v_slope(self) -> list[int]:
         return self.__q_v_slope
 
     @q_v_slope.setter
-    def q_v_slope(self, value: list) -> None:
+    def q_v_slope(self, value: list[int]) -> None:
         self.__q_v_slope = value
 
     @property
-    def q_v_inter(self) -> list:
+    def q_v_inter(self) -> list[int]:
         return self.__q_v_inter
 
     @q_v_inter.setter
-    def q_v_inter(self, value: list) -> None:
+    def q_v_inter(self, value: list[int]) -> None:
         self.__q_v_inter = value
 
     @property
@@ -210,11 +210,11 @@ class ParametersState:
         self.__dac_step = value
 
     @property
-    def v_step(self) -> int | None:
+    def v_step(self) -> float | None:
         return self.__v_step
 
-    @step_v.setter
-    def v_step(self, value: int) -> None:
+    @v_step.setter
+    def v_step(self, value: float) -> None:
         self.__v_step = value
 
     def regenerate_soft_values(self) -> None:

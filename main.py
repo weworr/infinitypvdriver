@@ -89,7 +89,7 @@ def get_c_max() -> int:
     return DriverService.get_c_max()
 
 
-def get_v_and_c_range() -> dict:
+def get_v_and_c_range() -> dict[str, float]:
     return {
         'v_min': DriverService.get_v_min(),
         'v_max': DriverService.get_v_max(),
@@ -98,7 +98,7 @@ def get_v_and_c_range() -> dict:
     }
 
 
-def get_q_limits() -> dict:
+def get_q_limits() -> dict[str, int]:
     return DriverService.get_q_limits()
 
 
@@ -168,7 +168,7 @@ def get_c_inter() -> float:
     return DriverService.get_c_inter()
 
 
-def get_q_v_slope() -> dict:
+def get_q_v_slope() -> dict[str, int]:
     q_v_slope = DriverService.get_q_v_slope()
 
     return {
@@ -186,7 +186,7 @@ def get_current_q_v_slope() -> int:
     return DriverService.get_current_q_v_slope()
 
 
-def get_q_c_slope() -> dict:
+def get_q_c_slope() -> dict[str, int]:
     q_c_slope = DriverService.get_q_c_slope()
 
     return {
@@ -204,7 +204,7 @@ def get_current_q_c_slope() -> int:
     return DriverService.get_current_q_c_slope()
 
 
-def get_q_v_inter() -> dict:
+def get_q_v_inter() -> dict[str, int]:
     q_v_inter = DriverService.get_q_v_inter()
 
     return {
@@ -222,7 +222,7 @@ def get_current_q_v_inter() -> int:
     return DriverService.get_current_q_v_inter()
 
 
-def get_q_c_inter() -> dict:
+def get_q_c_inter() -> dict[str, int]:
     q_c_inter = DriverService.get_q_c_inter()
 
     return {
@@ -270,20 +270,46 @@ def set_v_ref_by_voltage(voltage: float) -> None:
     return DriverService.set_v_ref_by_voltage(voltage)
 
 
+def get_current_v_ref() -> int:
+    """
+    Funkcja sterownika
+    """
+    return DriverService.get_current_v_ref_as_dac()
+
+
+def get_current_v_ref_as_voltage() -> float:
+    """
+    Funkcja sterownika
+    """
+    return DriverService.get_current_v_ref_as_v()
+
+
+def set_v_ref_step(dac: int) -> None:
+    """
+    Funkcja sterownika
+    """
+    DriverService.set_v_ref_step(dac)
+
+
+def set_v_ref_step_by_voltage(voltage: float) -> None:
+    """
+    Funkcja sterownika
+    """
+    DriverService.set_v_ref_step_by_voltage(voltage)
+
+
 def next_step() -> None:
     """
     Funkcja sterownika
     """
-    return DriverService.set_next_v_ref()
+    DriverService.next_step()
 
-def get_voltage_and_current() -> dict:
-    """
-    :return: Słownik w postaci:
-        {
-            "voltage": <float>,
-            "current": <float>
-        }
-    """
+
+def change_step_direction() -> None:
+    DriverService.change_step_direction()
+
+
+def get_voltage_and_current() -> dict[str, float]:
     return DriverService.get_voltage_and_current()
 
 # endregion Working Commands
@@ -291,3 +317,29 @@ def get_voltage_and_current() -> dict:
 
 if __name__ == '__main__':
     init()
+
+    # TODO Kuba - przetestować do końca ustawianie tych v_ref i stepów.
+    exit()
+    voltage = 0.1
+    # step = 0.05 + 0.04
+    step = -0.05
+    # 0.05 -> 0.01
+    # 0.1 -> 0.06
+    v_min = DriverService.get_v_min()
+    v_max = DriverService.get_v_max()
+
+    print('v_min + step', v_min + step)
+
+    print(v_min + v_max)  # 0.038
+
+    print('v_min:\t', v_min)
+    print('v_max:\t', v_max)
+
+    dac = NumericUtils.calculate_dac(voltage, v_min, v_max)
+    print(f'calculate_dac {voltage}:\t', dac)
+
+    print('calculate_voltage_from_dac:\t', NumericUtils.calculate_voltage_from_dac(dac, v_min, v_max))
+
+    DriverService.set_v_ref_step_by_voltage(step)
+    print('get_dac_step:\t', DriverService.get_dac_step())
+    print('get_v_step:\t', DriverService.get_v_step())

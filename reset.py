@@ -1,6 +1,7 @@
 import serial
 import sys
 
+
 def main() -> None:
     serial_handler = serial.Serial(
         sys.argv[1],

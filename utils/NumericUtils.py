@@ -20,7 +20,7 @@ class NumericUtils:
         return result
 
     @staticmethod
-    def merge_bytes_as_decimal_command_result(command_result: list) -> int:
+    def merge_bytes_as_decimal_command_result(command_result: list[int]) -> int:
         """
         Zwraca oznakowaną liczbę całkowitą będącą rezultatem połączenia otrzymanych bajtów.
         Bajty wyliczane są na podstawie drugiego bajtu paczki otrzymanej od urządzenia - N_DATA.
@@ -53,14 +53,11 @@ class NumericUtils:
         return int(log2(pga_configuration))
 
     @staticmethod
-    def calculate_dac(voltage: float) -> int:
-        from services.DriverService import DriverService
-
-        # TODO Sobijanek - nie podoba mi się to, że jest tutaj DriverService wpięty. xd
+    def calculate_dac(voltage: float, v_min: float, v_max: float) -> int:
         return math.floor(
-            4095 * (voltage - DriverService.get_v_min()) / (DriverService.get_v_max() - DriverService.get_v_min())
+            4095 * (voltage - v_min) / (v_max - v_min)
         )
 
     @staticmethod
     def calculate_voltage_from_dac(dac: int, v_min: float, v_max: float) -> float:
-        
+        return (((v_max - v_min) / 4095) * dac) + v_min

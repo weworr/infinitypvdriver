@@ -68,10 +68,14 @@ class NumeralSystemUtilsTest(unittest.TestCase):
         )
 
     def test_calculate_dac_from_voltage(self) -> None:
-        DriverService.get_v_min()
-        DriverService.get_v_max()
-
         self.assertEqual(
             3089,
-            NumericUtils.calculate_dac(2.01)
+            NumericUtils.calculate_dac(
+                2.01,
+                DriverService.get_v_min(),
+                DriverService.get_v_max()
+            )
         )
+
+    def test_calculate_voltage_from_dac(self) -> None:
+        self.assertEqual(1, 1)  # TODO
