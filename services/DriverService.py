@@ -42,7 +42,7 @@ class DriverService:
     def __set_q_limits() -> None:
         p: ParametersState = ParameterStateSingleton.get_instance()
 
-        q_limits: list = DriverService.__send_command(CommandEnum.GET_Q_LIMITS)[3:7]
+        q_limits: list[int] = DriverService.__send_command(CommandEnum.GET_Q_LIMITS)[3:7]
         p.q_limits_v_min = q_limits[0]
         p.q_limits_v_max = q_limits[1]
         p.q_limits_c_min = q_limits[2]
@@ -357,9 +357,12 @@ class DriverService:
     def set_v_ref_by_dac(dac: int) -> None:
         DriverService.__validate_dac(dac)
 
+        dac_bytes: bytes = dac.to_bytes(2)
+
         DriverService.__send_command(
             CommandEnum.SET_V_REF,
-            dac
+            dac_bytes[0],
+            dac_bytes[1]
         )
 
         ParameterStateSingleton.get_instance().v_ref = dac
@@ -387,10 +390,12 @@ class DriverService:
         )
 
     @staticmethod
-    def set_v_ref_step(dac_step: int) -> None:
-        DriverService.__validate_dac(dac_step)
-
+    def set_v_ref_step(dac_step: int, ascending: bool = True) -> None:
         p: ParametersState = ParameterStateSingleton.get_instance()
+
+        if not ascending:
+            dac_step = -dac_step
+
         p.dac_step = dac_step
 
         v_min: float = DriverService.get_v_min()
@@ -402,7 +407,7 @@ class DriverService:
             v_max
         )
 
-        p.v_step = v_max + voltage if 0 > voltage else v_min + voltage
+        p.v_step = -(v_min + abs(voltage))
 
     @staticmethod
     def set_v_ref_step_by_voltage(voltage: float) -> None:
@@ -424,10 +429,11 @@ class DriverService:
 
         DriverService.set_v_ref_step(
             NumericUtils.calculate_dac(
-                (v_max if voltage < 0 else v_min) + voltage - shift,
+                v_min + abs(voltage),
                 v_min,
                 v_max
-            )
+            ),
+            voltage > 0
         )
 
     @staticmethod
@@ -436,6 +442,7 @@ class DriverService:
 
         if new_dac > MAX_DAC:
             new_dac = MAX_DAC
+
         elif new_dac < MIN_DAC:
             new_dac = MIN_DAC
 
@@ -465,18 +472,15 @@ class DriverService:
 
     @staticmethod
     def get_voltage_and_current() -> dict[str, float]:
-        raw_voltage_and_current: list = DriverService.__send_command(CommandEnum.GET_VOLTAGE_AND_CURRENT)[3:7]
+        raw_voltage_and_current: list[int] = DriverService.__send_command(CommandEnum.GET_VOLTAGE_AND_CURRENT)[3:7]
 
         raw_voltage: int = NumericUtils.merge_bytes_as_decimal(*raw_voltage_and_current[0:2])
         raw_current: int = NumericUtils.merge_bytes_as_decimal(*raw_voltage_and_current[2:4])
 
+        voltage_adc: float = NumericUtils.calculate_adc_from_raw_value(raw_voltage, DriverService.get_v_pga())
+        current_adc: float = NumericUtils.calculate_adc_from_raw_value(raw_current, DriverService.get_c_pga())
+
         return {
-            'voltage': (
-                           NumericUtils.calculate_adc_from_raw_value(raw_voltage, DriverService.get_v_pga())
-                           * DriverService.get_v_slope()
-                       ) + DriverService.get_v_inter(),
-            'current': (
-                           NumericUtils.calculate_adc_from_raw_value(raw_current, DriverService.get_c_pga())
-                           * DriverService.get_c_slope()
-                       ) + DriverService.get_c_inter(),
+            'voltage': voltage_adc * DriverService.get_v_slope() + DriverService.get_v_inter(),
+            'current': current_adc * DriverService.get_c_slope() + DriverService.get_c_inter(),
         }

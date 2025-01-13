@@ -361,7 +361,7 @@ if __name__ == '__main__':
     init()
 
     # TODO Kuba - przetestować do końca ustawianie tych v_ref i stepów.
-    exit()
+    # exit()
     voltage = 0.1
     # step = 0.05 + 0.04
     step = -0.05
@@ -370,18 +370,40 @@ if __name__ == '__main__':
     v_min = DriverService.get_v_min()
     v_max = DriverService.get_v_max()
 
-    print('v_min + step', v_min + step)
+    # print('v_min + step', v_min + step)
 
-    print(v_min + v_max)  # 0.038
+    # print(v_min + v_max)  # 0.038
 
-    print('v_min:\t', v_min)
-    print('v_max:\t', v_max)
+    # print('v_min:\t', v_min)
+    # print('v_max:\t', v_max)
+
+    if step < 0:
+        DriverService.set_v_ref_by_dac(4095)
 
     dac = NumericUtils.calculate_dac(voltage, v_min, v_max)
-    print(f'calculate_dac {voltage}:\t', dac)
+    # print(f'calculate_dac {voltage}:\t', dac)
 
-    print('calculate_voltage_from_dac:\t', NumericUtils.calculate_voltage_from_dac(dac, v_min, v_max))
-
+    # print('calculate_voltage_from_dac:\t', NumericUtils.calculate_voltage_from_dac(dac, v_min, v_max))
     DriverService.set_v_ref_step_by_voltage(step)
+    print('------- MAIN DriverService.set_v_ref_step_by_voltage(step) ------')
     print('get_dac_step:\t', DriverService.get_dac_step())
     print('get_v_step:\t', DriverService.get_v_step())
+    print('------- ------- ------- ------- ------- ------')
+
+    # print('get_current_v_ref_as_dac:\t', DriverService.get_current_v_ref_as_dac())
+    # print('get_current_v_ref_as_v:\t', DriverService.get_current_v_ref_as_v())
+
+    for i in range(5):
+        DriverService.next_step()
+        print(f'AFTER {i+1} STEP')
+        print('get_current_v_ref_as_dac:\t', DriverService.get_current_v_ref_as_dac())
+        print('get_current_v_ref_as_v:\t', DriverService.get_current_v_ref_as_v())
+
+    print('---------------------------------------------')
+    DriverService.change_step_direction()
+
+    for i in range(5):
+        DriverService.next_step()
+        print(f'AFTER {i+1} STEP')
+        print('get_current_v_ref_as_dac:\t', DriverService.get_current_v_ref_as_dac())
+        print('get_current_v_ref_as_v:\t', DriverService.get_current_v_ref_as_v())
