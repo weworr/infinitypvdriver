@@ -22,10 +22,10 @@ class ParameterState:
         self.__q_limits_c_min: int = 30
         self.__q_limits_c_max: int = 25
 
-        self.__q_c_slope: list[int] = []  # TODO Do weryfikacji, czy wartość jest stała niezależnie od vref i gain
-        self.__q_c_inter: list[int] = []  # TODO Do weryfikacji, czy wartość jest stała niezależnie od vref i gain
-        self.__q_v_slope: list[int] = []  # TODO Do weryfikacji, czy wartość jest stała niezależnie od vref i gain
-        self.__q_v_inter: list[int] = []  # TODO Do weryfikacji, czy wartość jest stała niezależnie od vref i gain
+        self.__q_c_slope: list[int] = []  # TODO Do weryfikacji, czy wartość jest stała niezależnie od vref i gain - niezmienne
+        self.__q_c_inter: list[int] = []  # TODO Do weryfikacji, czy wartość jest stała niezależnie od vref i gain - niezmienne
+        self.__q_v_slope: list[int] = []  # TODO Do weryfikacji, czy wartość jest stała niezależnie od vref i gain - niezmienne
+        self.__q_v_inter: list[int] = []  # TODO Do weryfikacji, czy wartość jest stała niezależnie od vref i gain - niezmienne
 
         self.__mode: str = ModeEnum.VFIX.name
         self.__v_ref: int = 0  # TODO Do weryfikacji, czy wartość jest 0 na start.
@@ -226,12 +226,12 @@ class ParameterState:
         if regenerate_q_limits:
             DriverService.get_q_limits(True)
 
-        DriverService.get_v_min(True)
-        DriverService.get_v_max(True)
-        DriverService.get_v_slope(True)
-        DriverService.get_v_inter(True)
+        DriverService.get_v_min(True)  # niezmienne ze wzgledu na gain i vref
+        DriverService.get_v_max(True)  # niezmienne ze wzgledu na gain i vref
+        DriverService.get_v_slope(True)  # niezmienne ze wzgledu na vref
+        DriverService.get_v_inter(True)  # niezmienne ze wzgledu na vref
 
-        DriverService.get_c_min(True)
-        DriverService.get_c_max(True)
-        DriverService.get_c_slope(True)
-        DriverService.get_c_inter(True)
+        DriverService.get_c_min(True)  # niezmienne ze wzgledu na gain i vref
+        DriverService.get_c_max(True)  # niezmienne ze wzgledu na gain i vref
+        DriverService.get_c_slope(True)  # niezmienne ze wzgledu na vref
+        DriverService.get_c_inter(True)  # niezmienne ze wzgledu na vref

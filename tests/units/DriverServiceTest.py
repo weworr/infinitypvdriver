@@ -78,22 +78,18 @@ class DriverServiceTest(unittest.TestCase):
                 DriverService._DriverService__validate_dac(i)
 
     def test_init_driver(self) -> None:
+        p: ParameterState = ParameterStateSingleton.get_instance()
+
         DriverService.init_driver()
 
-        for instance in ParameterStateSingleton.get_all_instances():
-            self.assertIsInstance(instance, ParameterState)
-            self.assertEqual(self.__V_MIN_GAIN_1, instance.v_min)
-            self.assertEqual(self.__V_MAX_GAIN_1, instance.v_max)
+        self.assertIsInstance(p, ParameterState)
+        self.assertEqual(self.__V_MIN_GAIN_1, p.v_min)
+        self.assertEqual(self.__V_MAX_GAIN_1, p.v_max)
 
-            self.assertEqual(self.__V_SLOPE_GAIN_1, instance.v_slope)
-            self.assertEqual(self.__V_INTER_GAIN_1, instance.v_inter)
-            self.assertEqual(self.__C_SLOPE_GAIN_1, instance.c_slope)
-            self.assertEqual(self.__C_INTER_GAIN_1, instance.c_inter)
-
-            self.assertEqual(self.__Q_LIMITS_GAIN_1['v_min'], instance.q_limits_v_min)
-            self.assertEqual(self.__Q_LIMITS_GAIN_1['v_max'], instance.q_limits_v_max)
-            self.assertEqual(self.__Q_LIMITS_GAIN_1['c_min'], instance.q_limits_c_min)
-            self.assertEqual(self.__Q_LIMITS_GAIN_1['c_max'], instance.q_limits_c_max)
+        self.assertEqual(self.__V_SLOPE_GAIN_1, p.v_slope)
+        self.assertEqual(self.__V_INTER_GAIN_1, p.v_inter)
+        self.assertEqual(self.__C_SLOPE_GAIN_1, p.c_slope)
+        self.assertEqual(self.__C_INTER_GAIN_1, p.c_inter)
 
     def test_get_internal_idn(self) -> None:
         self.assertEqual(

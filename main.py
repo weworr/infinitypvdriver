@@ -10,6 +10,7 @@ from utils.NumericUtils import NumericUtils
 #   - weryfikacja "TODO Do weryfikacji" 14.01
 #   - README
 #   - funkcje zwracające dicta, powinny zwracać listę
+#   - ustawianie vpga i cpga po sobie
 
 @function_logger
 def init() -> None:
@@ -76,22 +77,22 @@ def get_unit_idn() -> int:
 # region Calibration Commands
 # ===========================
 @function_logger
-def get_v_min() -> int:
+def get_v_min() -> float:
     return DriverService.get_v_min()
 
 
 @function_logger
-def get_v_max() -> int:
+def get_v_max() -> float:
     return DriverService.get_v_max()
 
 
 @function_logger
-def get_c_min() -> int:
+def get_c_min() -> float:
     return DriverService.get_c_min()
 
 
 @function_logger
-def get_c_max() -> int:
+def get_c_max() -> float:
     return DriverService.get_c_max()
 
 
@@ -390,46 +391,3 @@ def get_voltage_and_current() -> list[float]:
 
 if __name__ == '__main__':
     init()
-
-    # TODO Kuba - przetestować do końca ustawianie tych v_ref i stepów.
-    # exit()
-    voltage = 0.1
-    step = -0.05
-
-    v_min = DriverService.get_v_min()
-    v_max = DriverService.get_v_max()
-
-    print('v_min:\t', v_min)
-    print('v_max:\t', v_max)
-
-    if step < 0:
-        DriverService.set_v_ref_by_dac(4095)
-
-    dac = NumericUtils.calculate_dac(voltage, v_min, v_max)
-    # print(dac, NumericUtils.calculate_voltage_from_dac(dac, v_min, v_max))
-    # print(f'calculate_dac {voltage}:\t', dac)
-
-    # print('calculate_voltage_from_dac:\t', NumericUtils.calculate_voltage_from_dac(dac, v_min, v_max))
-    DriverService.set_v_ref_step_by_voltage(step)
-    print('------- MAIN DriverService.set_v_ref_step_by_voltage(step) ------')
-    print('get_dac_step:\t', DriverService.get_dac_step())
-    print('get_v_step:\t', DriverService.get_v_step())
-    print('------- ------- ------- ------- ------- ------')
-    exit()
-    # print('get_current_v_ref_as_dac:\t', DriverService.get_current_v_ref_as_dac())
-    # print('get_current_v_ref_as_v:\t', DriverService.get_current_v_ref_as_v())
-
-    for i in range(5):
-        DriverService.next_step()
-        print(f'AFTER {i+1} STEP')
-        print('get_current_v_ref_as_dac:\t', DriverService.get_current_v_ref_as_dac())
-        print('get_current_v_ref_as_v:\t', DriverService.get_current_v_ref_as_v())
-
-    print('---------------------------------------------')
-    DriverService.change_step_direction()
-
-    for i in range(5):
-        DriverService.next_step()
-        print(f'AFTER {i+1} STEP')
-        print('get_current_v_ref_as_dac:\t', DriverService.get_current_v_ref_as_dac())
-        print('get_current_v_ref_as_v:\t', DriverService.get_current_v_ref_as_v())
