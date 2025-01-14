@@ -1,11 +1,13 @@
 import unittest
-from unittest.mock import patch, mock_open
+from unittest.mock import patch, mock_open, Mock
 
-from ParameterStateSingleton import ParameterStateSingleton
-from ParametersState import ParametersState
+from parameters.ParameterStateSingleton import ParameterStateSingleton
+from parameters.ParameterState import ParameterState
 from enums.CommandEnum import CommandEnum
 from enums.ModeEnum import ModeEnum
+from serialHandlers.SerialHandler import SerialHandler
 from services.DriverService import DriverService
+from tests.mocks.MockSerial import MockSerial
 from utils.NumericUtils import NumericUtils
 
 
@@ -33,8 +35,14 @@ class DriverServiceTest(unittest.TestCase):
     __Q_V_INTER: list[int] = [31, 31, 31, 31]
     __Q_C_INTER: list[int] = [31, 31, 31, 31]
 
+    __mock_serial: MockSerial = MockSerial()
+    __mock_serial_handler: Mock = Mock(spec=SerialHandler)
+
     def setUp(self) -> None:
+        patch('serialHandlers.SerialHandler.SerialHandler.get_instance', return_value=self.__mock_serial).start()
         patch('builtins.open', new_callable=mock_open).start()
+
+        self.__mock_serial_handler.get_instance.return_value = DriverServiceTest.__mock_serial
 
         DriverService.init_driver()
 
@@ -73,7 +81,7 @@ class DriverServiceTest(unittest.TestCase):
         DriverService.init_driver()
 
         for instance in ParameterStateSingleton.get_all_instances():
-            self.assertIsInstance(instance, ParametersState)
+            self.assertIsInstance(instance, ParameterState)
             self.assertEqual(self.__V_MIN_GAIN_1, instance.v_min)
             self.assertEqual(self.__V_MAX_GAIN_1, instance.v_max)
 
@@ -128,7 +136,7 @@ class DriverServiceTest(unittest.TestCase):
         )
 
     def test_get_v_min_when_none(self) -> None:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
         p.v_min = None
 
         DriverService.get_v_min()
@@ -145,7 +153,7 @@ class DriverServiceTest(unittest.TestCase):
         )
 
     def test_get_v_max_when_none(self) -> None:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
         p.v_max = None
 
         DriverService.get_v_max()
@@ -162,7 +170,7 @@ class DriverServiceTest(unittest.TestCase):
         )
 
     def test_get_c_min_when_none(self) -> None:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
         p.c_min = None
 
         DriverService.get_c_min()
@@ -179,7 +187,7 @@ class DriverServiceTest(unittest.TestCase):
         )
 
     def test_get_c_max_when_none(self) -> None:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
         p.c_max = None
 
         DriverService.get_c_max()
@@ -196,7 +204,7 @@ class DriverServiceTest(unittest.TestCase):
         )
 
     def test_get_q_limits_when_one_value_is_none(self) -> None:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
         p.q_limits_v_min = None
 
         DriverService.get_q_limits()
@@ -218,7 +226,7 @@ class DriverServiceTest(unittest.TestCase):
         )
 
     def test_q_limits_v_min_when_none(self) -> None:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
         p.q_limits_v_min = None
 
         DriverService.get_q_limits()
@@ -235,7 +243,7 @@ class DriverServiceTest(unittest.TestCase):
         )
 
     def test_q_limits_v_max_when_none(self) -> None:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
         p.q_limits_v_max = None
 
         DriverService.get_q_limits_v_max()
@@ -252,7 +260,7 @@ class DriverServiceTest(unittest.TestCase):
         )
 
     def test_get_q_limits_c_min_when_none(self) -> None:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
         p.q_limits_c_min = None
 
         DriverService.get_q_limits_c_min()
@@ -269,7 +277,7 @@ class DriverServiceTest(unittest.TestCase):
         )
 
     def test_q_limits_c_max_when_none(self) -> None:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
         p.q_limits_c_max = None
 
         DriverService.get_q_limits_c_max()
@@ -286,7 +294,7 @@ class DriverServiceTest(unittest.TestCase):
         )
 
     def test_get_v_pga_when_none(self) -> None:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
         p.v_pga = None
 
         DriverService.get_v_pga()
@@ -303,7 +311,7 @@ class DriverServiceTest(unittest.TestCase):
         )
 
     def test_get_c_pga_when_none(self) -> None:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
         p.c_pga = None
 
         DriverService.get_c_pga()
@@ -346,7 +354,7 @@ class DriverServiceTest(unittest.TestCase):
         )
 
     def test_get_v_slope_when_none(self) -> None:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
         p.v_slope = None
 
         DriverService.get_v_slope()
@@ -363,7 +371,7 @@ class DriverServiceTest(unittest.TestCase):
         )
 
     def test_get_v_inter_when_none(self) -> None:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
         p.v_inter = None
 
         DriverService.get_v_inter()
@@ -380,7 +388,7 @@ class DriverServiceTest(unittest.TestCase):
         )
 
     def test_get_c_slope_when_none(self) -> None:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
         p.c_slope = None
 
         DriverService.get_c_slope()
@@ -397,7 +405,7 @@ class DriverServiceTest(unittest.TestCase):
         )
 
     def test_get_c_inter_when_none(self) -> None:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
         p.c_inter = None
 
         DriverService.get_c_inter()
@@ -414,7 +422,7 @@ class DriverServiceTest(unittest.TestCase):
         )
 
     def test_get_q_v_slope_when_empty(self) -> None:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
         p.q_v_slope = []
 
         DriverService.get_q_v_slope()
@@ -431,7 +439,7 @@ class DriverServiceTest(unittest.TestCase):
         )
 
     def test_current_q_v_slope_when_empty(self) -> None:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
         p.q_v_slope = []
 
         self.assertEqual(
@@ -451,7 +459,7 @@ class DriverServiceTest(unittest.TestCase):
         )
 
     def test_get_q_c_slope_when_empty(self) -> None:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
         p.q_c_slope = []
 
         DriverService.get_q_c_slope()
@@ -468,7 +476,7 @@ class DriverServiceTest(unittest.TestCase):
         )
 
     def test_get_current_q_c_slope_when_empty(self) -> None:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
         p.q_c_slope = []
 
         self.assertEqual(
@@ -488,7 +496,7 @@ class DriverServiceTest(unittest.TestCase):
         )
 
     def test_get_q_v_inter_when_empty(self) -> None:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
         p.q_v_inter = []
 
         DriverService.get_q_v_inter()
@@ -505,7 +513,7 @@ class DriverServiceTest(unittest.TestCase):
         )
 
     def test_get_current_q_v_inter_when_empty(self) -> None:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
         p.q_v_inter = []
 
         self.assertEqual(
@@ -525,7 +533,7 @@ class DriverServiceTest(unittest.TestCase):
         )
 
     def test_get_q_c_inter_when_empty(self) -> None:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
         p.q_c_inter = []
 
         DriverService.get_q_c_inter()
@@ -542,7 +550,7 @@ class DriverServiceTest(unittest.TestCase):
         )
 
     def test_get_current_q_c_inter_when_empty(self) -> None:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
         p.q_c_inter = []
 
         self.assertEqual(

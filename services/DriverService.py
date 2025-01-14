@@ -1,11 +1,11 @@
-from SerialHandler import SerialHandler
+from serialHandlers.SerialHandler import SerialHandler
 import serial
 
-from ParametersState import ParametersState
+from parameters.ParameterState import ParameterState
 from enums.CommandEnum import CommandEnum
-from ParameterStateSingleton import ParameterStateSingleton
+from parameters.ParameterStateSingleton import ParameterStateSingleton
 from enums.ModeEnum import ModeEnum
-from logger.LoggerDecorator import command_logger
+from loggers.LoggerDecorator import command_logger
 from utils.NumericUtils import NumericUtils
 
 
@@ -40,7 +40,7 @@ class DriverService:
 
     @staticmethod
     def __set_q_limits() -> None:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
 
         q_limits: list[int] = DriverService.__send_command(CommandEnum.GET_Q_LIMITS)[3:7]
         p.q_limits_v_min = q_limits[0]
@@ -89,7 +89,7 @@ class DriverService:
 
     @staticmethod
     def get_v_min() -> int:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
 
         if p.v_min is None:
             p.v_min = DriverService.__calculate_value_from_q_format(
@@ -101,7 +101,7 @@ class DriverService:
 
     @staticmethod
     def get_v_max() -> int:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
 
         if p.v_max is None:
             p.v_max = DriverService.__calculate_value_from_q_format(
@@ -113,7 +113,7 @@ class DriverService:
 
     @staticmethod
     def get_c_min() -> int:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
 
         if p.c_min is None:
             p.c_min = DriverService.__calculate_value_from_q_format(
@@ -125,7 +125,7 @@ class DriverService:
 
     @staticmethod
     def get_c_max() -> int:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
 
         if p.c_max is None:
             p.c_max = DriverService.__calculate_value_from_q_format(
@@ -137,7 +137,7 @@ class DriverService:
 
     @staticmethod
     def get_q_limits() -> dict[str, int]:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
 
         if (
                 p.q_limits_v_min is None
@@ -156,7 +156,7 @@ class DriverService:
 
     @staticmethod
     def get_q_limits_v_min() -> int:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
 
         if p.q_limits_v_min is None:
             DriverService.__set_q_limits()
@@ -165,7 +165,7 @@ class DriverService:
 
     @staticmethod
     def get_q_limits_v_max() -> int:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
 
         if p.q_limits_v_max is None:
             DriverService.__set_q_limits()
@@ -174,7 +174,7 @@ class DriverService:
 
     @staticmethod
     def get_q_limits_c_min() -> int:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
 
         if p.q_limits_c_min is None:
             DriverService.__set_q_limits()
@@ -183,7 +183,7 @@ class DriverService:
 
     @staticmethod
     def get_q_limits_c_max() -> int:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
 
         if p.q_limits_c_max is None:
             DriverService.__set_q_limits()
@@ -192,7 +192,7 @@ class DriverService:
 
     @staticmethod
     def get_v_pga() -> int:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
 
         if p.v_pga is None:
             p.v_pga = NumericUtils.merge_bytes_as_decimal_command_result(
@@ -203,7 +203,7 @@ class DriverService:
 
     @staticmethod
     def get_c_pga() -> int:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
 
         if p.c_pga is None:
             p.c_pga = NumericUtils.merge_bytes_as_decimal_command_result(
@@ -230,7 +230,7 @@ class DriverService:
 
     @staticmethod
     def get_v_slope() -> float:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
 
         if p.v_slope is None:
             p.v_slope = DriverService.__calculate_value_from_q_format(
@@ -242,7 +242,7 @@ class DriverService:
 
     @staticmethod
     def get_v_inter() -> float:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
 
         if p.v_inter is None:
             p.v_inter = DriverService.__calculate_value_from_q_format(
@@ -254,7 +254,7 @@ class DriverService:
 
     @staticmethod
     def get_c_slope() -> float:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
 
         if p.c_slope is None:
             p.c_slope = DriverService.__calculate_value_from_q_format(
@@ -266,7 +266,7 @@ class DriverService:
 
     @staticmethod
     def get_c_inter() -> float:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
 
         if p.c_inter is None:
             p.c_inter = DriverService.__calculate_value_from_q_format(
@@ -278,7 +278,7 @@ class DriverService:
 
     @staticmethod
     def get_q_v_slope() -> list[int]:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
 
         if not p.q_v_slope:
             p.q_v_slope = DriverService.__send_command(CommandEnum.GET_Q_V_SLOPE)[3:7]
@@ -291,7 +291,7 @@ class DriverService:
 
     @staticmethod
     def get_q_c_slope() -> list[int]:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
 
         if not p.q_c_slope:
             p.q_c_slope = DriverService.__send_command(CommandEnum.GET_Q_C_SLOPE)[3:7]
@@ -304,7 +304,7 @@ class DriverService:
 
     @staticmethod
     def get_q_v_inter() -> list[int]:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
 
         if not p.q_v_inter:
             p.q_v_inter = DriverService.__send_command(CommandEnum.GET_Q_V_INTER)[3:7]
@@ -317,7 +317,7 @@ class DriverService:
 
     @staticmethod
     def get_q_c_inter() -> list[int]:
-        p: ParametersState = ParameterStateSingleton.get_instance()
+        p: ParameterState = ParameterStateSingleton.get_instance()
 
         if not p.q_c_inter:
             p.q_c_inter = DriverService.__send_command(CommandEnum.GET_Q_C_INTER)[3:7]
@@ -380,11 +380,8 @@ class DriverService:
 
     # TODO Do wywalenia ten ascending. xd
     @staticmethod
-    def set_v_ref_step(dac_step: int, ascending: bool = True) -> None:
-        p: ParametersState = ParameterStateSingleton.get_instance()
-
-        if not ascending:
-            dac_step = -dac_step
+    def set_v_ref_step(dac_step: int) -> None:
+        p: ParameterState = ParameterStateSingleton.get_instance()
 
         p.dac_step = dac_step
 
@@ -397,7 +394,7 @@ class DriverService:
             v_max
         )
 
-        p.v_step = -(v_min + abs(voltage))
+        p.v_step = (-1 if dac_step < 0 else 1) * (v_min + abs(voltage))
 
     @staticmethod
     def set_v_ref_step_by_voltage(voltage: float) -> None:
@@ -415,12 +412,11 @@ class DriverService:
             return
 
         DriverService.set_v_ref_step(
-            NumericUtils.calculate_dac(
+            (-1 if voltage < 0 else 1) * NumericUtils.calculate_dac(
                 v_min + abs(voltage),
                 v_min,
                 v_max
             ),
-            voltage > 0
         )
 
     @staticmethod

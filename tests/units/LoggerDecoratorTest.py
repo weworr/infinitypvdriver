@@ -1,10 +1,12 @@
 import unittest
-from unittest.mock import patch, mock_open
+from unittest.mock import patch, mock_open, MagicMock
 
-from logger.LoggerDecorator import function_logger
+from loggers.LoggerDecorator import function_logger
 
 
-class MyTestCase(unittest.TestCase):
+class LoggerDecoratorTest(unittest.TestCase):
+    mock_open: MagicMock = None
+
     def setUp(self) -> None:
         self.mock_open = mock_open()
         patch('builtins.open', self.mock_open).start()
@@ -12,9 +14,9 @@ class MyTestCase(unittest.TestCase):
     def tearDown(self) -> None:
         patch.stopall()
 
-    def test_something(self) -> None:
-        self.__sample_method()
+    def test_logger(self) -> None:
         handler = self.mock_open()
+        self.__sample_method()
 
         self.assertEqual(
             2,

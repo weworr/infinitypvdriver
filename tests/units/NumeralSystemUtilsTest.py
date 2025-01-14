@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import Mock, patch, mock_open
 
-from SerialHandler import SerialHandler
+from serialHandlers.SerialHandler import SerialHandler
 from services.DriverService import DriverService
 from tests.mocks.MockSerial import MockSerial
 from utils.NumericUtils import NumericUtils
@@ -15,7 +15,7 @@ class NumeralSystemUtilsTest(unittest.TestCase):
     __mock_serial_handler: Mock = Mock(spec=SerialHandler)
 
     def setUp(self) -> None:
-        patch('SerialHandler.SerialHandler.get_instance', return_value=self.__mock_serial).start()
+        patch('serialHandlers.SerialHandler.SerialHandler.get_instance', return_value=self.__mock_serial).start()
         patch('builtins.open', new_callable=mock_open).start()
 
         self.__mock_serial_handler.get_instance.return_value = NumeralSystemUtilsTest.__mock_serial

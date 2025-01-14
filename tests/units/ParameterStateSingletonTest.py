@@ -1,13 +1,21 @@
 import unittest
-from unittest.mock import patch, PropertyMock, mock_open
+from unittest.mock import patch, PropertyMock, mock_open, Mock
 
-from ParameterStateSingleton import ParameterStateSingleton
+from parameters.ParameterStateSingleton import ParameterStateSingleton
+from serialHandlers.SerialHandler import SerialHandler
 from services.DriverService import DriverService
+from tests.mocks.MockSerial import MockSerial
 
 
 class ParameterStateSingletonTest(unittest.TestCase):
+    __mock_serial: MockSerial = MockSerial()
+    __mock_serial_handler: Mock = Mock(spec=SerialHandler)
+
     def setUp(self) -> None:
+        patch('serialHandlers.SerialHandler.SerialHandler.get_instance', return_value=self.__mock_serial).start()
         patch('builtins.open', new_callable=mock_open).start()
+
+        self.__mock_serial_handler.get_instance.return_value = ParameterStateSingletonTest.__mock_serial
 
         DriverService.init_driver()
 

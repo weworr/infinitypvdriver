@@ -4,10 +4,10 @@ import serial
 from tests.mocks.MockSerial import MockSerial
 
 
-MOCK = True
-
-
 class SerialHandler:
+    MOCK: bool = True
+    """Pozwala na testowanie kodu na przygotowanych wcześniej odpowiedziach od maszyny."""
+
     __instance: serial.Serial | MockSerial | None = None
 
     def __init__(self):
@@ -19,7 +19,7 @@ class SerialHandler:
             if port is None:
                 raise RuntimeError('Port must be specified before serial handler initialisation.')
 
-            if MOCK:
+            if SerialHandler.MOCK:
                 cls.__instance = MockSerial()
                 return cls.__instance
 

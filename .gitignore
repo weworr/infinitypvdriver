@@ -1,7 +1,11 @@
+# Environment
 .idea
+.venv
+
+# Test
+.coverage
 __pycache__
 */__pycache__/*
-.venv
-logs.txt
+
+# Log
 log.txt
-.coverage

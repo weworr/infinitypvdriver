@@ -1,7 +1,7 @@
 from enums.ModeEnum import ModeEnum
 
 
-class ParametersState:
+class ParameterState:
     def __init__(self, channel: int):
         self.__channel: int = channel
 
