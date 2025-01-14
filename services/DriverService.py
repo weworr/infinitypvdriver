@@ -55,12 +55,10 @@ class DriverService:
 
     @staticmethod
     def init_driver():
-        ParameterStateSingleton.set_active_channel(1)
-
         for instance in ParameterStateSingleton.get_all_instances():
             instance.regenerate_soft_values()
 
-            q_limits = DriverService.__send_command(CommandEnum.GET_Q_LIMITS)[3:7]
+            q_limits: list[int] = DriverService.__send_command(CommandEnum.GET_Q_LIMITS)[3:7]
             instance.q_limits_v_min = q_limits[0]
             instance.q_limits_v_max = q_limits[1]
             instance.q_limits_c_min = q_limits[2]
@@ -332,26 +330,17 @@ class DriverService:
 
     @staticmethod
     def set_mode(mode: str) -> None:
-        p: ParametersState = ParameterStateSingleton.get_instance()
-
         try:
             mode_enum: ModeEnum = ModeEnum[mode]
         except KeyError:
             raise Exception('Unsupported working mode. Available working modes are "VFIX" and "MPPT".')
 
         DriverService.__send_command(CommandEnum.SET_MODE, mode_enum.value)
-        p.mode = mode_enum.name
+        ParameterStateSingleton.get_instance().mode = mode_enum.name
 
     @staticmethod
     def get_mode() -> str:
-        p: ParametersState = ParameterStateSingleton.get_instance()
-
-        if p.mode is None:
-            p.mode = NumericUtils.merge_bytes_as_decimal_command_result(
-                DriverService.__send_command(CommandEnum.GET_MODE)
-            )
-
-        return p.mode
+        return ParameterStateSingleton.get_instance().mode
 
     @staticmethod
     def set_v_ref_by_dac(dac: int) -> None:
@@ -389,6 +378,7 @@ class DriverService:
             DriverService.get_v_max()
         )
 
+    # TODO Do wywalenia ten ascending. xd
     @staticmethod
     def set_v_ref_step(dac_step: int, ascending: bool = True) -> None:
         p: ParametersState = ParameterStateSingleton.get_instance()
@@ -423,9 +413,6 @@ class DriverService:
         if 0 == voltage:
             DriverService.set_v_ref_step(MIN_DAC)
             return
-
-        # TODO dla innych ustawień (GAINów) trzeba zweryfikować, czy shift jest taki sam, oraz czy ma ten sam znak!
-        shift: float = v_min + v_max
 
         DriverService.set_v_ref_step(
             NumericUtils.calculate_dac(

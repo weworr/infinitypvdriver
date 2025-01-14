@@ -360,6 +360,9 @@ def get_voltage_and_current() -> dict[str, float]:
 if __name__ == '__main__':
     init()
 
+    print(DriverService.get_c_min())
+    print(DriverService.get_c_max())
+    exit()
     # TODO Kuba - przetestować do końca ustawianie tych v_ref i stepów.
     # exit()
     voltage = 0.1
@@ -374,13 +377,15 @@ if __name__ == '__main__':
 
     # print(v_min + v_max)  # 0.038
 
-    # print('v_min:\t', v_min)
-    # print('v_max:\t', v_max)
+    print('v_min:\t', v_min)
+    print('v_max:\t', v_max)
 
     if step < 0:
         DriverService.set_v_ref_by_dac(4095)
 
     dac = NumericUtils.calculate_dac(voltage, v_min, v_max)
+    print(NumericUtils.calculate_voltage_from_dac(dac, v_min, v_max))
+    exit()
     # print(f'calculate_dac {voltage}:\t', dac)
 
     # print('calculate_voltage_from_dac:\t', NumericUtils.calculate_voltage_from_dac(dac, v_min, v_max))

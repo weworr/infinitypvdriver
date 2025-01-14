@@ -8,6 +8,9 @@ from utils.NumericUtils import NumericUtils
 
 
 class NumeralSystemUtilsTest(unittest.TestCase):
+    __V_MIN_GAIN_1 = -4.004883877933025
+    __V_MAX_GAIN_1 = 3.9668768607079983
+
     __mock_serial: MockSerial = MockSerial()
     __mock_serial_handler: Mock = Mock(spec=SerialHandler)
 
@@ -74,10 +77,17 @@ class NumeralSystemUtilsTest(unittest.TestCase):
             3089,
             NumericUtils.calculate_dac(
                 2.01,
-                DriverService.get_v_min(),
-                DriverService.get_v_max()
+                self.__V_MIN_GAIN_1,
+                self.__V_MAX_GAIN_1
             )
         )
 
     def test_calculate_voltage_from_dac(self) -> None:
-        self.assertEqual(1, 1)  # TODO
+        self.assertEqual(
+            0.09877219949195037,
+            NumericUtils.calculate_voltage_from_dac(
+                2108,
+                self.__V_MIN_GAIN_1,
+                self.__V_MAX_GAIN_1
+            )
+        )

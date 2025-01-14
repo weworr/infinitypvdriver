@@ -1,3 +1,6 @@
+from enums.ModeEnum import ModeEnum
+
+
 class ParametersState:
     def __init__(self, channel: int):
         self.__channel: int = channel
@@ -24,7 +27,7 @@ class ParametersState:
         self.__q_v_slope: list[int] = []  # TODO Do weryfikacji, czy wartość jest stała niezależnie od vref i gain
         self.__q_v_inter: list[int] = []  # TODO Do weryfikacji, czy wartość jest stała niezależnie od vref i gain
 
-        self.__mode: str | None = None
+        self.__mode: str = ModeEnum.VFIX.name
         self.__v_ref: int = 0  # TODO Do weryfikacji, czy wartość jest 0 na start.
         self.__dac_step: int | None = None
         self.__v_step: int | None = None

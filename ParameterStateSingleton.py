@@ -4,7 +4,7 @@ from ParametersState import ParametersState
 class ParameterStateSingleton:
     __MAX_CHANNEL: int = 8
     __instances: list[ParametersState] = [ParametersState(i) for i in range(__MAX_CHANNEL)]
-    __active_channel: int | None = None
+    __active_channel: int = 0
 
     def __init__(self):
         pass
