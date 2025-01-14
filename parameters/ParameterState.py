@@ -5,22 +5,22 @@ class ParameterState:
     def __init__(self, channel: int):
         self.__channel: int = channel
 
-        self.__v_pga: int = 1  # TODO Do weryfikacji
-        self.__v_min: int | None = None
-        self.__v_max: int | None = None
-        self.__v_slope: int | None = None
-        self.__v_inter: int | None = None
+        self.__v_pga: int = 1
+        self.__v_min: float = None
+        self.__v_max: float = None
+        self.__v_slope: float = None
+        self.__v_inter: float = None
 
-        self.__c_pga: int = 1  # TODO Do weryfikacji
-        self.__c_min: int | None = None
-        self.__c_max: int | None = None
-        self.__c_slope: int | None = None
-        self.__c_inter: int | None = None
+        self.__c_pga: int = 1
+        self.__c_min: float = None
+        self.__c_max: float = None
+        self.__c_slope: float = None
+        self.__c_inter: float = None
 
-        self.__q_limits_v_min: int | None = None
-        self.__q_limits_v_max: int | None = None
-        self.__q_limits_c_min: int | None = None
-        self.__q_limits_c_max: int | None = None
+        self.__q_limits_v_min: int = 28
+        self.__q_limits_v_max: int = 28
+        self.__q_limits_c_min: int = 30
+        self.__q_limits_c_max: int = 25
 
         self.__q_c_slope: list[int] = []  # TODO Do weryfikacji, czy wartość jest stała niezależnie od vref i gain
         self.__q_c_inter: list[int] = []  # TODO Do weryfikacji, czy wartość jest stała niezależnie od vref i gain
@@ -29,11 +29,11 @@ class ParameterState:
 
         self.__mode: str = ModeEnum.VFIX.name
         self.__v_ref: int = 0  # TODO Do weryfikacji, czy wartość jest 0 na start.
-        self.__dac_step: int | None = None
-        self.__v_step: int | None = None
+        self.__dac_step: int = None
+        self.__v_step: int = None
 
     @property
-    def channel(self) -> int | None:
+    def channel(self) -> int:
         return self.__channel
 
     @channel.setter
@@ -51,35 +51,35 @@ class ParameterState:
         self.regenerate_soft_values()
 
     @property
-    def v_min(self) -> int | None:
+    def v_min(self) -> float:
         return self.__v_min
 
     @v_min.setter
-    def v_min(self, value: int) -> None:
+    def v_min(self, value: float) -> None:
         self.__v_min = value
 
     @property
-    def v_max(self) -> int | None:
+    def v_max(self) -> float:
         return self.__v_max
 
     @v_max.setter
-    def v_max(self, value: int) -> None:
+    def v_max(self, value: float) -> None:
         self.__v_max = value
 
     @property
-    def v_slope(self) -> int | None:
+    def v_slope(self) -> float:
         return self.__v_slope
 
     @v_slope.setter
-    def v_slope(self, value: int) -> None:
+    def v_slope(self, value: float) -> None:
         self.__v_slope = value
 
     @property
-    def v_inter(self) -> int | None:
+    def v_inter(self) -> float:
         return self.__v_inter
 
     @v_inter.setter
-    def v_inter(self, value: int) -> None:
+    def v_inter(self, value: float) -> None:
         self.__v_inter = value
 
     @property
@@ -93,35 +93,35 @@ class ParameterState:
         self.regenerate_soft_values()
 
     @property
-    def c_min(self) -> int | None:
+    def c_min(self) -> float:
         return self.__c_min
 
     @c_min.setter
-    def c_min(self, value: int):
+    def c_min(self, value: float):
         self.__c_min = value
 
     @property
-    def c_max(self) -> int | None:
+    def c_max(self) -> float:
         return self.__c_max
 
     @c_max.setter
-    def c_max(self, value: int) -> None:
+    def c_max(self, value: float) -> None:
         self.__c_max = value
 
     @property
-    def c_slope(self) -> int | None:
+    def c_slope(self) -> float:
         return self.__c_slope
 
     @c_slope.setter
-    def c_slope(self, value: int) -> None:
+    def c_slope(self, value: float) -> None:
         self.__c_slope = value
 
     @property
-    def c_inter(self) -> int | None:
+    def c_inter(self) -> float:
         return self.__c_inter
 
     @c_inter.setter
-    def c_inter(self, value: int) -> None:
+    def c_inter(self, value: float) -> None:
         self.__c_inter = value
 
     @property
@@ -205,7 +205,7 @@ class ParameterState:
         self.__v_ref = value
 
     @property
-    def dac_step(self) -> int | None:
+    def dac_step(self) -> int:
         return self.__dac_step
 
     @dac_step.setter
@@ -213,22 +213,25 @@ class ParameterState:
         self.__dac_step = value
 
     @property
-    def v_step(self) -> float | None:
+    def v_step(self) -> float:
         return self.__v_step
 
     @v_step.setter
     def v_step(self, value: float) -> None:
         self.__v_step = value
 
-    def regenerate_soft_values(self) -> None:
+    def regenerate_soft_values(self, regenerate_q_limits: bool = True) -> None:
         from services.DriverService import DriverService
 
-        self.v_min = DriverService.get_v_min()
-        self.v_max = DriverService.get_v_max()
-        self.v_slope = DriverService.get_v_slope()
-        self.v_inter = DriverService.get_v_inter()
+        if regenerate_q_limits:
+            DriverService.get_q_limits(True)
 
-        self.c_min = DriverService.get_c_min()
-        self.c_max = DriverService.get_c_max()
-        self.c_slope = DriverService.get_c_slope()
-        self.c_inter = DriverService.get_c_inter()
+        DriverService.get_v_min(True)
+        DriverService.get_v_max(True)
+        DriverService.get_v_slope(True)
+        DriverService.get_v_inter(True)
+
+        DriverService.get_c_min(True)
+        DriverService.get_c_max(True)
+        DriverService.get_c_slope(True)
+        DriverService.get_c_inter(True)

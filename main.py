@@ -5,13 +5,11 @@ from utils.NumericUtils import NumericUtils
 
 
 # TODO
-#   - Logger
-#   - vref na różne sposoby
 #   - dekorator/lub po prostu coś innego handlera na close
 #   - dokumentacja :(
 #   - weryfikacja "TODO Do weryfikacji" 14.01
 #   - README
-#   - wywalić poza folder główny reszte klas
+#   - funkcje zwracające dicta, powinny zwracać listę
 
 @function_logger
 def init() -> None:
@@ -98,7 +96,7 @@ def get_c_max() -> int:
 
 
 @function_logger
-def get_v_and_c_range() -> dict[str, float]:
+def get_v_and_c_range_as_dict() -> dict[str, float]:
     return {
         'v_min': DriverService.get_v_min(),
         'v_max': DriverService.get_v_max(),
@@ -108,8 +106,18 @@ def get_v_and_c_range() -> dict[str, float]:
 
 
 @function_logger
-def get_q_limits() -> dict[str, int]:
+def get_v_and_c_range() -> list[float]:
+    return list(get_v_and_c_range_as_dict().values())
+
+
+@function_logger
+def get_q_limits_as_dict() -> dict[str, int]:
     return DriverService.get_q_limits()
+
+
+@function_logger
+def get_q_limits() -> list[int]:
+    return list(get_q_limits_as_dict().values())
 
 
 @function_logger
@@ -191,7 +199,7 @@ def get_c_inter() -> float:
 
 
 @function_logger
-def get_q_v_slope() -> dict[str, int]:
+def get_q_v_slope_as_dict() -> dict[str, int]:
     q_v_slope = DriverService.get_q_v_slope()
 
     return {
@@ -203,6 +211,11 @@ def get_q_v_slope() -> dict[str, int]:
 
 
 @function_logger
+def get_q_v_slope() -> list[int]:
+    return list(get_q_v_slope_as_dict().values())
+
+
+@function_logger
 def get_current_q_v_slope() -> int:
     """
     Funkcja sterownika.
@@ -211,7 +224,7 @@ def get_current_q_v_slope() -> int:
 
 
 @function_logger
-def get_q_c_slope() -> dict[str, int]:
+def get_q_c_slope_as_dict() -> dict[str, int]:
     q_c_slope = DriverService.get_q_c_slope()
 
     return {
@@ -223,6 +236,11 @@ def get_q_c_slope() -> dict[str, int]:
 
 
 @function_logger
+def get_q_c_slope() -> list[int]:
+    return list(get_q_c_slope_as_dict().values())
+
+
+@function_logger
 def get_current_q_c_slope() -> int:
     """
     Funkcja sterownika.
@@ -231,7 +249,7 @@ def get_current_q_c_slope() -> int:
 
 
 @function_logger
-def get_q_v_inter() -> dict[str, int]:
+def get_q_v_inter_as_dict() -> dict[str, int]:
     q_v_inter = DriverService.get_q_v_inter()
 
     return {
@@ -243,6 +261,11 @@ def get_q_v_inter() -> dict[str, int]:
 
 
 @function_logger
+def get_q_v_inter() -> list[int]:
+    return list(get_q_v_inter_as_dict().values())
+
+
+@function_logger
 def get_current_q_v_inter() -> int:
     """
     Funkcja sterownika.
@@ -251,7 +274,7 @@ def get_current_q_v_inter() -> int:
 
 
 @function_logger
-def get_q_c_inter() -> dict[str, int]:
+def get_q_c_inter_as_dict() -> dict[str, int]:
     q_c_inter = DriverService.get_q_c_inter()
 
     return {
@@ -260,6 +283,11 @@ def get_q_c_inter() -> dict[str, int]:
         'q_c_inter_x4': q_c_inter[2],
         'q_c_inter_x8': q_c_inter[3]
     }
+
+
+@function_logger
+def get_q_c_inter() -> list[int]:
+    return list(get_q_c_inter_as_dict().values())
 
 
 @function_logger
@@ -350,8 +378,12 @@ def change_step_direction() -> None:
 
 
 @function_logger
-def get_voltage_and_current() -> dict[str, float]:
+def get_voltage_and_current_as_dict() -> dict[str, float]:
     return DriverService.get_voltage_and_current()
+
+
+def get_voltage_and_current() -> list[float]:
+    return list(get_voltage_and_current_as_dict().values())
 
 # endregion Working Commands
 

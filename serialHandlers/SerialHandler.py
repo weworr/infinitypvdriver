@@ -8,13 +8,13 @@ class SerialHandler:
     MOCK: bool = True
     """Pozwala na testowanie kodu na przygotowanych wcześniej odpowiedziach od maszyny."""
 
-    __instance: serial.Serial | MockSerial | None = None
+    __instance = None
 
     def __init__(self):
         pass
 
     @classmethod
-    def get_instance(cls, port: str | None = 'COM11') -> serial.Serial:
+    def get_instance(cls, port: str = 'COM11') -> serial.Serial:
         if cls.__instance is None:
             if port is None:
                 raise RuntimeError('Port must be specified before serial handler initialisation.')

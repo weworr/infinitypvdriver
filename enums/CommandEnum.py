@@ -24,7 +24,7 @@ class CommandEnum(Enum):
     GET_C_PGA = 0x3D
 
     SET_V_PGA = 0x43
-    SET_C_PGA = 0x45
+    SET_C_PGA = 0x44
 
     GET_V_SLOPE = 0x38
     GET_V_INTER = 0x39

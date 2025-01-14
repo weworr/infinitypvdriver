@@ -14,8 +14,8 @@ MAX_DAC: int = 4095
 
 
 class DriverService:
-    @command_logger
     @staticmethod
+    @command_logger
     def __send_command(
             command: CommandEnum,
             data_msb: int = 0x00,
@@ -56,13 +56,10 @@ class DriverService:
     @staticmethod
     def init_driver():
         for instance in ParameterStateSingleton.get_all_instances():
-            instance.regenerate_soft_values()
+            DriverService.active_unit(instance.channel)
+            instance.regenerate_soft_values(False)
 
-            q_limits: list[int] = DriverService.__send_command(CommandEnum.GET_Q_LIMITS)[3:7]
-            instance.q_limits_v_min = q_limits[0]
-            instance.q_limits_v_max = q_limits[1]
-            instance.q_limits_c_min = q_limits[2]
-            instance.q_limits_c_max = q_limits[3]
+        DriverService.active_unit(0)
 
     @staticmethod
     def get_internal_idn() -> int:
@@ -88,10 +85,10 @@ class DriverService:
         return NumericUtils.merge_bytes_as_decimal(*DriverService.__send_command(CommandEnum.GET_UNIT_IDN)[3:7])
 
     @staticmethod
-    def get_v_min() -> int:
+    def get_v_min(regenerate: bool = False) -> float:
         p: ParameterState = ParameterStateSingleton.get_instance()
 
-        if p.v_min is None:
+        if regenerate or p.v_min is None:
             p.v_min = DriverService.__calculate_value_from_q_format(
                 CommandEnum.GET_V_MIN,
                 DriverService.get_q_limits_v_min()
@@ -100,10 +97,10 @@ class DriverService:
         return p.v_min
 
     @staticmethod
-    def get_v_max() -> int:
+    def get_v_max(regenerate: bool = False) -> float:
         p: ParameterState = ParameterStateSingleton.get_instance()
 
-        if p.v_max is None:
+        if regenerate or p.v_max is None:
             p.v_max = DriverService.__calculate_value_from_q_format(
                 CommandEnum.GET_V_MAX,
                 DriverService.get_q_limits_v_max()
@@ -112,10 +109,10 @@ class DriverService:
         return p.v_max
 
     @staticmethod
-    def get_c_min() -> int:
+    def get_c_min(regenerate: bool = False) -> float:
         p: ParameterState = ParameterStateSingleton.get_instance()
 
-        if p.c_min is None:
+        if regenerate or p.c_min is None:
             p.c_min = DriverService.__calculate_value_from_q_format(
                 CommandEnum.GET_C_MIN,
                 DriverService.get_q_limits_c_min()
@@ -124,10 +121,10 @@ class DriverService:
         return p.c_min
 
     @staticmethod
-    def get_c_max() -> int:
+    def get_c_max(regenerate: bool = False) -> float:
         p: ParameterState = ParameterStateSingleton.get_instance()
 
-        if p.c_max is None:
+        if regenerate or p.c_max is None:
             p.c_max = DriverService.__calculate_value_from_q_format(
                 CommandEnum.GET_C_MAX,
                 DriverService.get_q_limits_c_max()
@@ -136,11 +133,12 @@ class DriverService:
         return p.c_max
 
     @staticmethod
-    def get_q_limits() -> dict[str, int]:
+    def get_q_limits(regenerate: bool = False) -> dict[str, int]:
         p: ParameterState = ParameterStateSingleton.get_instance()
 
         if (
-                p.q_limits_v_min is None
+                regenerate
+                or p.q_limits_v_min is None
                 or p.q_limits_v_max is None
                 or p.q_limits_c_min is None
                 or p.q_limits_c_max is None
@@ -229,10 +227,10 @@ class DriverService:
         ParameterStateSingleton.get_instance().c_pga = pga
 
     @staticmethod
-    def get_v_slope() -> float:
+    def get_v_slope(regenerate: bool = False) -> float:
         p: ParameterState = ParameterStateSingleton.get_instance()
 
-        if p.v_slope is None:
+        if regenerate or p.v_slope is None:
             p.v_slope = DriverService.__calculate_value_from_q_format(
                 CommandEnum.GET_V_SLOPE,
                 DriverService.get_current_q_v_slope()
@@ -241,10 +239,10 @@ class DriverService:
         return p.v_slope
 
     @staticmethod
-    def get_v_inter() -> float:
+    def get_v_inter(regenerate: bool = False) -> float:
         p: ParameterState = ParameterStateSingleton.get_instance()
 
-        if p.v_inter is None:
+        if regenerate or p.v_inter is None:
             p.v_inter = DriverService.__calculate_value_from_q_format(
                 CommandEnum.GET_V_INTER,
                 DriverService.get_current_q_v_inter()
@@ -253,10 +251,10 @@ class DriverService:
         return p.v_inter
 
     @staticmethod
-    def get_c_slope() -> float:
+    def get_c_slope(regenerate: bool = False) -> float:
         p: ParameterState = ParameterStateSingleton.get_instance()
 
-        if p.c_slope is None:
+        if regenerate or p.c_slope is None:
             p.c_slope = DriverService.__calculate_value_from_q_format(
                 CommandEnum.GET_C_SLOPE,
                 DriverService.get_current_q_c_slope()
@@ -265,10 +263,10 @@ class DriverService:
         return p.c_slope
 
     @staticmethod
-    def get_c_inter() -> float:
+    def get_c_inter(regenerate: bool = False) -> float:
         p: ParameterState = ParameterStateSingleton.get_instance()
 
-        if p.c_inter is None:
+        if regenerate or p.c_inter is None:
             p.c_inter = DriverService.__calculate_value_from_q_format(
                 CommandEnum.GET_C_INTER,
                 DriverService.get_current_q_c_inter()
