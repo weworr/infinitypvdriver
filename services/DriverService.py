@@ -55,10 +55,6 @@ class DriverService:
 
     @staticmethod
     def init_driver():
-        for instance in ParameterStateSingleton.get_all_instances():
-            DriverService.active_unit(instance.channel)
-            instance.regenerate_soft_values(False)
-
         DriverService.active_unit(0)
 
     @staticmethod
@@ -74,11 +70,8 @@ class DriverService:
 
         DriverService.__send_command(CommandEnum.ACTIVE_UNIT, data_lsb=channel)
 
-        # TODO Do weryfikacji. Powinniśmy trzymać konfiurację per channel.
-        #  Jakby mieli się przełączać to chyba nie zmieni się konfiguracja co?
-        #  Trzeba to będzie też testnąć. ;)
-
         ParameterStateSingleton.set_active_channel(channel)
+        ParameterStateSingleton.get_instance().regenerate_soft_values(False)
 
     @staticmethod
     def get_unit_idn() -> int:
@@ -344,7 +337,7 @@ class DriverService:
     def set_v_ref_by_dac(dac: int) -> None:
         DriverService.__validate_dac(dac)
 
-        dac_bytes: bytes = dac.to_bytes(2)
+        dac_bytes: bytes = dac.to_bytes(2, 'big')
 
         DriverService.__send_command(
             CommandEnum.SET_V_REF,
