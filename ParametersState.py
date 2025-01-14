@@ -189,7 +189,7 @@ class ParametersState:
         self.__q_v_inter = value
 
     @property
-    def mode(self) -> str | None:
+    def mode(self) -> str:
         return self.__mode
 
     @mode.setter
@@ -197,7 +197,7 @@ class ParametersState:
         self.__mode = value
 
     @property
-    def v_ref(self) -> int | None:
+    def v_ref(self) -> int:
         return self.__v_ref
 
     @v_ref.setter

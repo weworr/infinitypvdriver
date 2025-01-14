@@ -28,6 +28,11 @@ class DriverServiceTest(unittest.TestCase):
     __C_SLOPE_GAIN_1: float = 19.722755804657936
     __C_INTER_GAIN_1: float = -0.005021534860134125
 
+    __Q_V_SLOPE: list[int] = [30, 30, 30, 29]
+    __Q_C_SLOPE: list[int] = [26, 26, 26, 26]
+    __Q_V_INTER: list[int] = [31, 31, 31, 31]
+    __Q_C_INTER: list[int] = [31, 31, 31, 31]
+
     def setUp(self) -> None:
         patch('builtins.open', new_callable=mock_open).start()
 
@@ -335,76 +340,220 @@ class DriverServiceTest(unittest.TestCase):
             DriverService.set_c_pga(3)
 
     def test_get_v_slope(self) -> None:
-        self.assertEqual(1, 1)  # TODO
+        self.assertEqual(
+            self.__V_SLOPE_GAIN_1,
+            DriverService.get_v_slope()
+        )
 
     def test_get_v_slope_when_none(self) -> None:
-        self.assertEqual(1, 1)  # TODO
+        p: ParametersState = ParameterStateSingleton.get_instance()
+        p.v_slope = None
+
+        DriverService.get_v_slope()
+
+        self.assertEqual(
+            self.__V_SLOPE_GAIN_1,
+            p.v_slope
+        )
 
     def test_get_v_inter(self) -> None:
-        self.assertEqual(1, 1)  # TODO
+        self.assertEqual(
+            self.__V_INTER_GAIN_1,
+            DriverService.get_v_inter()
+        )
 
     def test_get_v_inter_when_none(self) -> None:
-        self.assertEqual(1, 1)  # TODO
+        p: ParametersState = ParameterStateSingleton.get_instance()
+        p.v_inter = None
+
+        DriverService.get_v_inter()
+
+        self.assertEqual(
+            self.__V_INTER_GAIN_1,
+            p.v_inter
+        )
 
     def test_get_c_slope(self) -> None:
-        self.assertEqual(1, 1)  # TODO
+        self.assertEqual(
+            self.__C_SLOPE_GAIN_1,
+            DriverService.get_c_slope()
+        )
 
     def test_get_c_slope_when_none(self) -> None:
-        self.assertEqual(1, 1)  # TODO
+        p: ParametersState = ParameterStateSingleton.get_instance()
+        p.c_slope = None
+
+        DriverService.get_c_slope()
+
+        self.assertEqual(
+            self.__C_SLOPE_GAIN_1,
+            p.c_slope
+        )
 
     def test_get_c_inter(self) -> None:
-        self.assertEqual(1, 1)  # TODO
+        self.assertEqual(
+            self.__C_INTER_GAIN_1,
+            DriverService.get_c_inter()
+        )
 
     def test_get_c_inter_when_none(self) -> None:
-        self.assertEqual(1, 1)  # TODO
+        p: ParametersState = ParameterStateSingleton.get_instance()
+        p.c_inter = None
+
+        DriverService.get_c_inter()
+
+        self.assertEqual(
+            self.__C_INTER_GAIN_1,
+            p.c_inter
+        )
 
     def test_get_q_v_slope(self) -> None:
-        self.assertEqual(1, 1)  # TODO
+        self.assertEqual(
+            self.__Q_V_SLOPE,
+            DriverService.get_q_v_slope()
+        )
 
-    def test_get_q_v_slope_when_none(self) -> None:
-        self.assertEqual(1, 1)  # TODO
+    def test_get_q_v_slope_when_empty(self) -> None:
+        p: ParametersState = ParameterStateSingleton.get_instance()
+        p.q_v_slope = []
+
+        DriverService.get_q_v_slope()
+
+        self.assertEqual(
+            self.__Q_V_SLOPE,
+            p.q_v_slope
+        )
 
     def test_current_q_v_slope(self) -> None:
-        self.assertEqual(1, 1)  # TODO
+        self.assertEqual(
+            self.__Q_V_SLOPE[0],
+            DriverService.get_current_q_v_slope()
+        )
 
-    def test_current_q_v_slope_when_none(self) -> None:
-        self.assertEqual(1, 1)  # TODO
+    def test_current_q_v_slope_when_empty(self) -> None:
+        p: ParametersState = ParameterStateSingleton.get_instance()
+        p.q_v_slope = []
+
+        self.assertEqual(
+            self.__Q_V_SLOPE[0],
+            DriverService.get_current_q_v_slope()
+        )
+
+        self.assertEqual(
+            self.__Q_V_SLOPE[0],
+            p.q_v_slope[0]
+        )
 
     def test_get_q_c_slope(self) -> None:
-        self.assertEqual(1, 1)  # TODO
+        self.assertEqual(
+            self.__Q_C_SLOPE,
+            DriverService.get_q_c_slope()
+        )
 
-    def test_get_q_c_slope_when_none(self) -> None:
-        self.assertEqual(1, 1)  # TODO
+    def test_get_q_c_slope_when_empty(self) -> None:
+        p: ParametersState = ParameterStateSingleton.get_instance()
+        p.q_c_slope = []
+
+        DriverService.get_q_c_slope()
+
+        self.assertEqual(
+            self.__Q_C_SLOPE,
+            p.q_c_slope
+        )
 
     def test_get_current_q_c_slope(self) -> None:
-        self.assertEqual(1, 1)  # TODO
+        self.assertEqual(
+            self.__Q_C_SLOPE[0],
+            DriverService.get_current_q_c_slope()
+        )
 
-    def test_get_current_q_c_slope_when_none(self) -> None:
-        self.assertEqual(1, 1)  # TODO
+    def test_get_current_q_c_slope_when_empty(self) -> None:
+        p: ParametersState = ParameterStateSingleton.get_instance()
+        p.q_c_slope = []
+
+        self.assertEqual(
+            self.__Q_C_SLOPE[0],
+            DriverService.get_current_q_c_slope()
+        )
+
+        self.assertEqual(
+            self.__Q_C_SLOPE[0],
+            p.q_c_slope[0]
+        )
 
     def test_get_q_v_inter(self) -> None:
-        self.assertEqual(1, 1)  # TODO
+        self.assertEqual(
+            self.__Q_V_INTER,
+            DriverService.get_q_v_inter()
+        )
 
-    def test_get_q_v_inter_when_none(self) -> None:
-        self.assertEqual(1, 1)  # TODO
+    def test_get_q_v_inter_when_empty(self) -> None:
+        p: ParametersState = ParameterStateSingleton.get_instance()
+        p.q_v_inter = []
+
+        DriverService.get_q_v_inter()
+
+        self.assertEqual(
+            self.__Q_V_INTER,
+            p.q_v_inter
+        )
 
     def test_get_current_q_v_inter(self) -> None:
-        self.assertEqual(1, 1)  # TODO
+        self.assertEqual(
+            self.__Q_V_INTER[0],
+            DriverService.get_current_q_v_inter()
+        )
 
-    def test_get_current_q_v_inter_when_none(self) -> None:
-        self.assertEqual(1, 1)  # TODO
+    def test_get_current_q_v_inter_when_empty(self) -> None:
+        p: ParametersState = ParameterStateSingleton.get_instance()
+        p.q_v_inter = []
+
+        self.assertEqual(
+            self.__Q_V_INTER[0],
+            DriverService.get_current_q_v_inter()
+        )
+
+        self.assertEqual(
+            self.__Q_V_INTER[0],
+            p.q_v_inter[0]
+        )
 
     def test_get_q_c_inter(self) -> None:
-        self.assertEqual(1, 1)  # TODO
+        self.assertEqual(
+            self.__Q_C_INTER,
+            DriverService.get_q_c_inter()
+        )
 
-    def test_get_q_c_inter_when_none(self) -> None:
-        self.assertEqual(1, 1)  # TODO
+    def test_get_q_c_inter_when_empty(self) -> None:
+        p: ParametersState = ParameterStateSingleton.get_instance()
+        p.q_c_inter = []
+
+        DriverService.get_q_c_inter()
+
+        self.assertEqual(
+            self.__Q_C_INTER,
+            p.q_c_inter
+        )
 
     def test_get_current_q_c_inter(self) -> None:
-        self.assertEqual(1, 1)  # TODO
+        self.assertEqual(
+            self.__Q_C_INTER[0],
+            DriverService.get_current_q_c_inter()
+        )
 
-    def test_get_current_q_c_inter_when_none(self) -> None:
-        self.assertEqual(1, 1)  # TODO
+    def test_get_current_q_c_inter_when_empty(self) -> None:
+        p: ParametersState = ParameterStateSingleton.get_instance()
+        p.q_c_inter = []
+
+        self.assertEqual(
+            self.__Q_C_INTER[0],
+            DriverService.get_current_q_c_inter()
+        )
+
+        self.assertEqual(
+            self.__Q_C_INTER[0],
+            p.q_c_inter[0]
+        )
 
     def test_set_mode(self) -> None:
         DriverService.set_mode(ModeEnum.VFIX.name)

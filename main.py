@@ -360,8 +360,11 @@ def get_voltage_and_current() -> dict[str, float]:
 if __name__ == '__main__':
     init()
 
-    print(DriverService.get_c_min())
-    print(DriverService.get_c_max())
+    print(DriverService.get_q_v_slope())
+    print(DriverService.get_q_c_slope())
+    print(DriverService.get_q_v_inter())
+    print(DriverService.get_q_c_inter())
+    # print(DriverService.get_c_max())
     exit()
     # TODO Kuba - przetestować do końca ustawianie tych v_ref i stepów.
     # exit()
