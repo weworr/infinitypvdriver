@@ -22,9 +22,10 @@ def function_logger(func: callable) -> callable:
 
 def command_logger(func: callable) -> callable:
     def wrapper(*args: any, **kwargs: any) -> callable:
+        result = func(*args, **kwargs)
         with open(str(Path(__file__).resolve().parent.parent) + os.sep + 'log.txt', 'a') as file:
-            file.write(f'{datetime.now()} Command: {args[0]}, arguments: {args[1:]}\n')
+            file.write(f'{datetime.now()} Command: {args[0]}, arguments: {args[1:]}, result{result}\n')
 
-        return func(*args, **kwargs)
+        return result
 
     return wrapper
